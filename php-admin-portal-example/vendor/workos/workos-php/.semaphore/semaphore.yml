@@ -1,0 +1,47 @@
+version: v1.0
+name: workos-php
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+auto_cancel:
+  running:
+    when: "branch != 'master'"
+fail_fast:
+  cancel:
+    when: "branch != 'master'"
+blocks:
+  - name: Format Check
+    dependencies: []
+    task:
+      jobs:
+        - name: php-cs-fixer
+          commands:
+            - checkout
+            - bash scripts/restore-cache-and-update-deps default
+            - composer run-script format-check
+  - name: Tests
+    dependencies: []
+    task:
+      prologue:
+        commands:
+          - checkout
+      jobs:
+        - name: php 7.0
+          commands:
+            - phpbrew --no-progress install 7.0.33
+            - phpbrew use php-7.0.33
+            - bash scripts/restore-cache-and-update-deps 70
+            - php composer.phar run-script test
+        - name: php 7.2
+          commands:
+            - phpbrew --no-progress install 7.2.34
+            - phpbrew use php-7.2.34
+            - bash scripts/restore-cache-and-update-deps 72
+            - php composer.phar run-script test
+        - name: php 7.4
+          commands:
+            - phpbrew --no-progress install 7.4.12
+            - phpbrew use php-7.4.12
+            - bash scripts/restore-cache-and-update-deps 74
+            - php composer.phar run-script test

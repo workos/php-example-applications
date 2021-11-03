@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="login.css">
+    </head>
+    <body class="container_login">
+        <div class='flex_column'>
+            <div class="flex heading_div">
+                <div class="heading_text_div">
+                    <h1>WorkOS</h1>
+                </div>
+            </div>
+
+            <h2>PHP Magic Link Example App</h2>
+            <form method="POST" action="/passwordless-auth">
+                <div class='flex_column'>
+                    <div>
+                        <input type="text" placeholder='Enter Your Email Address' id="email" name="email" class="text_input" required>
+                        <br></br>
+                    </div>
+                    <div>
+                        <button type="submit" class="button">Send Magic Link</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
