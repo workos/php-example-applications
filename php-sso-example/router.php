@@ -5,11 +5,11 @@ require __DIR__ . "/vendor/autoload.php";
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-//Set API Key, ClientID, Connection, and/or domain
+//Set API Key, ClientID, and Connection
 $WORKOS_API_KEY = "";
 $WORKOS_CLIENT_ID = "";
 $WORKOS_CONNECTION_ID = "";
-$CUSTOMER_DOMAIN = "";
+
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -38,20 +38,20 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 // /auth page is what will run the getAuthorizationUrl function
 
 
-/* There are 5 parameters for the GetAuthorizationURL Function
-Domain, Redirect URI, State, Provider, and Connection
+/* There are 6 parameters for the GetAuthorizationURL Function
+Domain (deprecated), Redirect URI, State, Provider, Connection and Organization
 These can be read about here: https://workos.com/docs/reference/sso/authorize/get
-We recommend using Connection (pass a connectionID) as opposed to Domain so in this example
-I am passing domain as an empty string */
+We recommend using Connection (pass a connectionID) */
 
     case ("/auth"):
         $authorizationUrl = (new \WorkOS\SSO())
             ->getAuthorizationUrl(
-                $CUSTOMER_DOMAIN, //domain as empty string
+                null, //domain is deprecated, use organization instead
                 'http://localhost:8000/auth/callback', //redirectURI
                 [], //state array, also empty
                 null, //Provider which can remain null unless being used
-                $WORKOS_CONNECTION_ID //connection which is the WorkOS Connection ID
+                $WORKOS_CONNECTION_ID, //connection which is the WorkOS Connection ID,
+                null //organization ID, to identify connection based on organization ID
             );
             
         header('Location: ' . $authorizationUrl, true, 302);
