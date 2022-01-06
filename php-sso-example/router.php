@@ -6,9 +6,9 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 //Set API Key, ClientID, and Connection
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
-$WORKOS_CONNECTION_ID = "";
+$WORKOS_API_KEY = "sk_test_a2V5XzAxRkExMkM3TTNSTldFNUNKSEFNUUVZQ1pTLDJtb3drUExOTk9vT3dDc1NDRTZnRUVVQ28";
+$WORKOS_CLIENT_ID = "client_01FA12C7QV793K318T2G1V3E7X";
+$WORKOS_CONNECTION_ID = "conn_01FNYP9FHYPEYN268C3D0RJJ7Z";
 
 
 // Setup html templating library
@@ -35,8 +35,17 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             return true;
         }
         return httpNotFound();
-// /auth page is what will run the getAuthorizationUrl function
 
+    case (preg_match("/\.png$/", $_SERVER["REQUEST_URI"]) ? true: false): 
+        $path = __DIR__ . "/static/images" .$_SERVER["REQUEST_URI"];
+        if (is_file($path)) {
+            header("Content-Type: image/png");
+            readfile($path);
+            return true;
+        }
+        return httpNotFound();
+
+// /auth page is what will run the getAuthorizationUrl function
 
 /* There are 6 parameters for the GetAuthorizationURL Function
 Domain (deprecated), Redirect URI, State, Provider, Connection and Organization
@@ -47,7 +56,7 @@ We recommend using Connection (pass a connectionID) */
         $authorizationUrl = (new \WorkOS\SSO())
             ->getAuthorizationUrl(
                 null, //domain is deprecated, use organization instead
-                'http://localhost:8000/auth/callback', //redirectURI
+                'http://localhost:8000/callback', //redirectURI
                 [], //state array, also empty
                 null, //Provider which can remain null unless being used
                 $WORKOS_CONNECTION_ID, //connection which is the WorkOS Connection ID,
@@ -56,15 +65,21 @@ We recommend using Connection (pass a connectionID) */
             
         header('Location: ' . $authorizationUrl, true, 302);
         return true;
-// /auth/callback page is what will run the getProfileAndToken function and return it
-    case ("/auth/callback"):
-        $profile = (new \WorkOS\SSO())->getProfileAndToken($_GET["code"]);
 
-        header("Content-Type: application/json");
-        echo json_encode($profile);
+    // /callback page is what will run the getProfileAndToken function and return it
+    case ("/callback"):
+        $profile = (new \WorkOS\SSO())->getProfileAndToken($_GET["code"]);
+        
+        
+        $first_name = $profile->raw['profile']['first_name'];
+
+        
+
+        echo $twig->render("login_successful.html.twig", ['raw_profile' => json_encode($profile), 'first_name' => $first_name]);
         return true;
  
-        // home and /login will display the login page       
+
+    // home and /login will display the login page       
     case ("/"):
     case ("/login"):
         echo $twig->render("login.html.twig");

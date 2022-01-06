@@ -10,6 +10,6 @@
     ],
     "require": {
       "workos/workos-php": "^1.5.1",
-      "twig/twig": "^1.42"
+      "twig/twig": "^3.0"
     }
 }
