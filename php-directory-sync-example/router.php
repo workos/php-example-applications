@@ -1,14 +1,13 @@
 <?php
 
 require __DIR__ . "/vendor/autoload.php";
-
+error_reporting(E_ALL ^ E_WARNING); 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 //Set API Key, ClientID, Connection, and/or domain
 $WORKOS_API_KEY = "";
 $WORKOS_CLIENT_ID = "";
-$WORKOS_DIRECTORY_ID = "";
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -46,9 +45,10 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 
     //Users endpoint for listUsers function, simply prints first 10 users to the page
     case ("/users"):
+        $directoryId = htmlspecialchars($_GET["id"]);
         $usersList = (new \WorkOS\DirectorySync())
             ->listUsers(
-                $WORKOS_DIRECTORY_ID
+                $directoryId
             ); 
         $users = json_encode($usersList);
         echo $twig->render('users.html.twig', ['users' => $users]);
@@ -56,18 +56,33 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         
     //Groups endpoint for listGroups function, simply prints groups to the page
     case ("/groups"):
+        $directoryId = htmlspecialchars($_GET["id"]);
         $groupsList = (new \WorkOS\DirectorySync())
             ->listGroups(
-                $WORKOS_DIRECTORY_ID
+                $directoryId
             );        
         $groups = json_encode($groupsList);
         echo $twig->render('groups.html.twig', ['groups' => $groups]);
+        return true;
+
+    //Directory endpoint 
+    case ("/directory"):
+        $directoryId = htmlspecialchars($_GET["id"]);
+        $directory = (new \WorkOS\DirectorySync())
+            ->getDirectory(
+                $directoryId
+            );        
+        $parsed_directory = json_encode($directory);        
+        echo $twig->render('directory.html.twig', ['directory' => $parsed_directory, 'id' => $directoryId]);
         return true;
  
     // home and /login will display the login page       
     case ("/"):
     case ("/login"):
-        echo $twig->render("login.html.twig");
+        $directoriesList = (new \WorkOS\DirectorySync())
+            ->listDirectories();   
+        $parsedDirectories = $directoriesList[2];        
+        echo $twig->render("login.html.twig", ['directories' => $parsedDirectories]);
         return true;
     // Any other endpoint returns a 404 
     default:

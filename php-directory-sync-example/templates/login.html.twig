@@ -13,8 +13,9 @@
             </div>
             
             <h2>PHP Directory Sync Example App</h2>
-            <a class="button login_button" href="/groups">Groups</a>
-            <a class="button login_button" href="/users">Users</a>
+            {% for i in directories %}
+                <a class="button login_button" href="/directory?id={{ i.raw['id'] }}">{{ i.raw['name'] }}</a>
+            {% endfor %}
         </div>
     </body>
 </html>
