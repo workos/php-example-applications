@@ -6,8 +6,8 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 //Set API Key, ClientID, Connection, and/or domain
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
+$WORKOS_API_KEY = "sk_test_a2V5XzAxRkExMkM3TTNSTldFNUNKSEFNUUVZQ1pTLDJtb3drUExOTk9vT3dDc1NDRTZnRUVVQ28";
+$WORKOS_CLIENT_ID = "client_01FA12C7QV793K318T2G1V3E7X";
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -66,7 +66,17 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             return true;
         }
         return httpNotFound();
-//Declare main and /login routes which renders templates/generate.html
+
+    case (preg_match("/\.png$/", $_SERVER["REQUEST_URI"]) ? true: false): 
+        $path = __DIR__ . "/static/images" .$_SERVER["REQUEST_URI"];
+        if (is_file($path)) {
+            header("Content-Type: image/png");
+            readfile($path);
+            return true;
+        }
+        return httpNotFound();
+
+    //Declare main and /login routes which renders templates/generate.html
     case ("/"):
         echo $twig->render("generate.html");
         return true; 
