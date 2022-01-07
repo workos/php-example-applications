@@ -6,8 +6,8 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 //Set API Key, ClientID, Connection, and/or domain
-$WORKOS_API_KEY = "sk_test_a2V5XzAxRkExMkM3TTNSTldFNUNKSEFNUUVZQ1pTLDJtb3drUExOTk9vT3dDc1NDRTZnRUVVQ28";
-$WORKOS_CLIENT_ID = "client_01FA12C7QV793K318T2G1V3E7X";
+$WORKOS_API_KEY = "";
+$WORKOS_CLIENT_ID = "";
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
