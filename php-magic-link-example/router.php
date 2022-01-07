@@ -82,7 +82,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             'http://localhost:8000/callback',
             '',
             'MagicLink',
-            null,
+            '',
             null
         );
 
