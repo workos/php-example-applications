@@ -6,9 +6,9 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 //Set API Key, ClientID, Connection, and/or domain
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
-$WORKOS_DIRECTORY_ID = "";
+$WORKOS_API_KEY = "sk_test_a2V5XzAxRkExMkM3TTNSTldFNUNKSEFNUUVZQ1pTLDJtb3drUExOTk9vT3dDc1NDRTZnRUVVQ28";
+$WORKOS_CLIENT_ID = "client_01FA12C7QV793K318T2G1V3E7X";
+$WORKOS_DIRECTORY_ID = "directory_01FHGRXQEXDV53BJRXCM2290ZR";
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -35,14 +35,23 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         }
         return httpNotFound();
 
+    case (preg_match("/\.png$/", $_SERVER["REQUEST_URI"]) ? true: false): 
+        $path = __DIR__ . "/static/images" .$_SERVER["REQUEST_URI"];
+        if (is_file($path)) {
+            header("Content-Type: image/png");
+            readfile($path);
+            return true;
+        }
+        return httpNotFound();
+
     //Users endpoint for listUsers function, simply prints first 10 users to the page
     case ("/users"):
         $usersList = (new \WorkOS\DirectorySync())
             ->listUsers(
                 $WORKOS_DIRECTORY_ID
             ); 
-        header("Content-Type: application/json");
-        echo json_encode($usersList);
+        $users = json_encode($usersList);
+        echo $twig->render('users.html.twig', ['users' => $users]);
         return true;
         
     //Groups endpoint for listGroups function, simply prints groups to the page
@@ -50,9 +59,9 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         $groupsList = (new \WorkOS\DirectorySync())
             ->listGroups(
                 $WORKOS_DIRECTORY_ID
-            );
-        header("Content-Type: application/json");
-        echo json_encode($groupsList);
+            );        
+        $groups = json_encode($groupsList);
+        echo $twig->render('groups.html.twig', ['groups' => $groups]);
         return true;
  
     // home and /login will display the login page       
