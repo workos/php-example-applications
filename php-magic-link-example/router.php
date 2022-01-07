@@ -46,6 +46,15 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         }
         return httpNotFound();
 
+    case (preg_match("/\.png$/", $_SERVER["REQUEST_URI"]) ? true: false): 
+        $path = __DIR__ . "/static/images" .$_SERVER["REQUEST_URI"];
+        if (is_file($path)) {
+            header("Content-Type: image/png");
+            readfile($path);
+            return true;
+        }
+        return httpNotFound();
+
     //Declare main and /login routes which renders templates/generate.html
     case ("/"):
         echo $twig->render("generate.html");
@@ -53,17 +62,17 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 
     case ("/callback"):
         $code = $_GET["code"];
-        echo $twig->render("success.html");
+        
         $profileAndToken = (new \WorkOS\SSO())->getProfileAndToken($code);
 
         // Use the information in `profile` for further business logic.
-        $profile = $profileAndToken->profile;
-        echo json_encode($profile);
+        $profile = json_encode($profileAndToken->profile);
+        echo $twig->render("success.html", ['profile' => $profile]);
         return true;
  
     case ("/passwordless-auth"):
         // Email of the user to authenticate
-        echo $twig->render("email-sent.html");
+        
         $email = $_POST["email"];
         $passwordless = new \WorkOS\Passwordless();
 
@@ -71,14 +80,16 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         $session = $passwordless->createSession(
             $email,
             'http://localhost:8000/callback',
-            null,
+            '',
             'MagicLink',
-            null,
+            '',
             null
         );
 
         // Send an email to the user via WorkOS with the link to authenticate
         $passwordless->sendSession($session);
+        $link = $session->link;
+        echo $twig->render("email-sent.html", ['link' => $link, 'email' => $email]);
 
     // all other routes don't return anything
     default:

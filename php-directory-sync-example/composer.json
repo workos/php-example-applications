@@ -9,7 +9,7 @@
       }
     ],
     "require": {
-      "workos/workos-php": "1.3.0",
-      "twig/twig": "^1.42"
+      "workos/workos-php": "1.6.0",
+      "twig/twig": "^2.0"
     }
 }

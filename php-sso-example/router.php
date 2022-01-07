@@ -6,9 +6,9 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 //Set API Key, ClientID, and Connection
-$WORKOS_API_KEY = "sk_test_a2V5XzAxRkExMkM3TTNSTldFNUNKSEFNUUVZQ1pTLDJtb3drUExOTk9vT3dDc1NDRTZnRUVVQ28";
-$WORKOS_CLIENT_ID = "client_01FA12C7QV793K318T2G1V3E7X";
-$WORKOS_CONNECTION_ID = "conn_01FNYP9FHYPEYN268C3D0RJJ7Z";
+$WORKOS_API_KEY = "";
+$WORKOS_CLIENT_ID = "";
+$WORKOS_CONNECTION_ID = "";
 
 
 // Setup html templating library
@@ -69,12 +69,8 @@ We recommend using Connection (pass a connectionID) */
     // /callback page is what will run the getProfileAndToken function and return it
     case ("/callback"):
         $profile = (new \WorkOS\SSO())->getProfileAndToken($_GET["code"]);
-        
-        
         $first_name = $profile->raw['profile']['first_name'];
-
         
-
         echo $twig->render("login_successful.html.twig", ['raw_profile' => json_encode($profile), 'first_name' => $first_name]);
         return true;
  

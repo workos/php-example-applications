@@ -66,7 +66,17 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             return true;
         }
         return httpNotFound();
-//Declare main and /login routes which renders templates/generate.html
+
+    case (preg_match("/\.png$/", $_SERVER["REQUEST_URI"]) ? true: false): 
+        $path = __DIR__ . "/static/images" .$_SERVER["REQUEST_URI"];
+        if (is_file($path)) {
+            header("Content-Type: image/png");
+            readfile($path);
+            return true;
+        }
+        return httpNotFound();
+
+    //Declare main and /login routes which renders templates/generate.html
     case ("/"):
         echo $twig->render("generate.html");
         return true; 

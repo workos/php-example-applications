@@ -5,7 +5,7 @@
     <body class="container_success">
         <div class="logged_in_nav">
             <div class="flex">
-                <p>You're logged in!</p>
+                <p>You're logged in, here is your groups object!</p>
             </div>
             <div>
                 <img src="workos_logo_new.png" alt="workos logo">
@@ -22,18 +22,16 @@
                     <a href="https://workos.com/docs" target="_blank"><button class='button'>Documentation</button></a>
                     <a href="https://workos.com/docs/reference" target="_blank"><button class='button'>API Reference</button></a>
                     <a href="https://workos.com/blog" target="_blank"><button class='button'>Blog</button></a>
-                    
+                    <button class="button" onclick="history.back()">Back</button>
                 </div>
             </div>
             <div class="logged_in_div_right">
                 <div class="flex_column">
-                    <h2>You did it! You logged in without a password!</h2>
+                    <h2>Raw Groups Response Details</h2>
                     <div class="text_box">
-                        <p>{{profile}}</p>
-                    </div>
-                    <a href="/"><button class="button">Log Out</button></a>
+                        <p>{{groups}}</p>
+                    </div>                    
                 </div>
-
             </div>
         </div>
     </body>
