@@ -167,6 +167,10 @@ div.text_box {
   word-wrap: break-word;
 }
 
+div.serve_link_text {
+  text-align: center;
+}
+
 .logged_in_nav {
   display: flex;
   justify-content: space-between;
