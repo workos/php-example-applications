@@ -28,4 +28,8 @@ Use the following command to run the app:
 php -S localhost:8000 router.php
 ```
 
-Once running, you'll be prompted for an Organization ID, simply plug this in and you'll be redirected to a live admin portal session for that organization.
+Once running, you'll be prompted for an Organization Name, a space separated list of domains associated with that domain, and if you'd like to launch the SSO or Directory Sync Admin Portal flow. 
+
+The app logic will check if there is a matching Organization already based on the domains entered and if not it will create a new one. Simply plug this in and you'll be redirected to a live admin portal session for that organization. 
+
+

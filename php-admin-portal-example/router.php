@@ -86,7 +86,6 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         $domainArray = explode(" ", $domain);        
         $orgName = $_POST['org'];
 
-
         //check if the organization name exists, otherwise create a new organization 
         $orgs = (new \WorkOS\Organizations()) -> listOrganizations($domainArray);
 
