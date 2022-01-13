@@ -81,15 +81,31 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         echo $twig->render("generate.html");
         return true; 
     case ("/portal"):
-        $orgId = $_POST['org'];
         $sessionIntent = $_POST['intent_selector'];
+        $domain = $_POST['domain'];
+        $domainArray = explode(" ", $domain);        
+        $orgName = $_POST['org'];
+
+        //check if the organization name exists, otherwise create a new organization 
+        $orgs = (new \WorkOS\Organizations()) -> listOrganizations($domainArray);
+
+        if ($orgs[2] != null) {
+            echo count($orgs);
+            $orgId = $orgs[2][0]->raw["id"];            
+        } else {
+            $newOrganization = (new \WorkOS\Organizations()) -> createOrganization($orgName, $domainArray);
+            $orgId = $newOrganization->id;
+        }
+
+        //generate portal link
         $linkPayloadObject = (new \WorkOS\Portal()) -> generateLink($orgId, $sessionIntent);
         $linkPayloadArray = objectToArray($linkPayloadObject);
         $linkPayloadArrayRawData = $linkPayloadArray['raw'];
         $finalLink = $linkPayloadArrayRawData['link'];
         Redirect($finalLink, false);
+
         return true;
-//else return  HTTP 404 Error
+    //else return  HTTP 404 Error
     default:
         return httpNotFound();
 }
