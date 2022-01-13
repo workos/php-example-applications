@@ -6,8 +6,8 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 //Set API Key, ClientID, Connection, and/or domain
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
+$WORKOS_API_KEY = "sk_test_a2V5XzAxRkExMkM3TTNSTldFNUNKSEFNUUVZQ1pTLDJtb3drUExOTk9vT3dDc1NDRTZnRUVVQ28";
+$WORKOS_CLIENT_ID = "client_01FA12C7QV793K318T2G1V3E7X";
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -81,15 +81,32 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         echo $twig->render("generate.html");
         return true; 
     case ("/portal"):
-        $orgId = $_POST['org'];
         $sessionIntent = $_POST['intent_selector'];
+        $domain = $_POST['domain'];
+        $domainArray = explode(" ", $domain);        
+        $orgName = $_POST['org'];
+
+
+        //check if the organization name exists, otherwise create a new organization 
+        $orgs = (new \WorkOS\Organizations()) -> listOrganizations($domainArray);
+
+        if ($orgs[2] != null) {
+            echo count($orgs);
+            $orgId = $orgs[2][0]->raw["id"];            
+        } else {
+            $newOrganization = (new \WorkOS\Organizations()) -> createOrganization($orgName, $domainArray);
+            $orgId = $newOrganization->id;
+        }
+
+        //generate portal link
         $linkPayloadObject = (new \WorkOS\Portal()) -> generateLink($orgId, $sessionIntent);
         $linkPayloadArray = objectToArray($linkPayloadObject);
         $linkPayloadArrayRawData = $linkPayloadArray['raw'];
         $finalLink = $linkPayloadArrayRawData['link'];
         Redirect($finalLink, false);
+
         return true;
-//else return  HTTP 404 Error
+    //else return  HTTP 404 Error
     default:
         return httpNotFound();
 }

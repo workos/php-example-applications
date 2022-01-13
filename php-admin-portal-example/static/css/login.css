@@ -205,3 +205,78 @@ div.text_box {
   font-size: smaller;
   width: 75%;
 }
+
+/* radio buttons */
+
+
+.wrapper{
+  display: inline-flex;
+  background: #fff;
+  height: 30px;
+  width: 300px;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 26px;
+  padding: 10px 7px;
+  margin-bottom: 30px;
+  box-shadow: 5px 5px 30px rgba(0,0,0,0.2);
+}
+.wrapper .option{
+  background: #fff;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 0 10px;
+  border-radius: 26px;
+  cursor: pointer;
+  padding: 0 10px;
+  border: 2px solid lightgrey;
+  transition: all 0.3s ease;
+}
+.wrapper .option .dot{
+  height: 20px;
+  width: 20px;
+  background: #d9d9d9;
+  border-radius: 50%;
+  position: relative;
+}
+.wrapper .option .dot::before{
+  position: absolute;
+  content: "";
+  top: 4px;
+  left: 4px;
+  width: 12px;
+  height: 12px;
+  background: #6363f1;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(1.5);
+  transition: all 0.3s ease;
+}
+input[type="radio"]{
+  display: none;
+}
+#intent-sso:checked:checked ~ .intent-sso,
+#intent-dsync:checked:checked ~ .intent-dsync{
+  border-color: #6363f1;
+  background: #6363f1;
+}
+#intent-sso:checked:checked ~ .intent-sso .dot,
+#intent-dsync:checked:checked ~ .intent-dsync .dot{
+  background: #fff;
+}
+#intent-sso:checked:checked ~ .intent-sso .dot::before,
+#intent-dsync:checked:checked ~ .intent-dsync .dot::before{
+  opacity: 1;
+  transform: scale(1);
+}
+.wrapper .option span{
+  font-size: 15px;
+  color: #808080;
+}
+#intent-sso:checked:checked ~ .intent-sso span,
+#intent-dsync:checked:checked ~ .intent-dsync span{
+  color: #fff;
+}
