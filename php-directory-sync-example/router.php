@@ -4,10 +4,7 @@ require __DIR__ . "/vendor/autoload.php";
 error_reporting(E_ALL ^ E_WARNING); 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-
-//Set API Key, ClientID, Connection, and/or domain
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
+include './variables.php';
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -75,6 +72,30 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         $parsed_directory = json_encode($directory);        
         echo $twig->render('directory.html.twig', ['directory' => $parsed_directory, 'id' => $directoryId]);
         return true;
+
+
+    //Webhooks endpoint 
+    case ("/webhooks"):
+        $payload = file_get_contents('php://input');
+        $sigHeader = $_SERVER["HTTP_WORKOS_SIGNATURE"];
+
+        if ($payload && $sigHeader) {
+            $webhook = (new \WorkOS\Webhook())
+            ->constructEvent($sigHeader, $payload, $WORKOS_WEBHOOK_SECRET, 180);
+            
+            error_log(print_r($WORKOS_ASCII, true));
+            error_log(print_r("↓↓↓↓ PRE-VALIDATION ↓↓↓↓", true));
+            error_log(print_r($payload, true));
+            error_log(print_r("↓↓↓↓ POST-VALIDATION ↓↓↓↓", true));
+            error_log(print_r($webhook, true));
+
+            echo $twig->render('webhooks.html.twig', ['webhook' => json_encode($data)]);
+            return true;
+
+        }
+        
+        echo $twig->render('webhooks.html.twig');
+        return true;
  
     // home and /login will display the login page       
     case ("/"):
@@ -84,6 +105,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         $parsedDirectories = $directoriesList[2];        
         echo $twig->render("login.html.twig", ['directories' => $parsedDirectories]);
         return true;
+        
     // Any other endpoint returns a 404 
     default:
         return httpNotFound();
