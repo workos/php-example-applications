@@ -10,6 +10,7 @@
     ],
     "require": {
       "workos/workos-php": "1.6.0",
-      "twig/twig": "^2.0"
+      "twig/twig": "^2.0",
+        "wisembly/elephant.io": "^3.3"
     }
 }
