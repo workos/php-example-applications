@@ -25,7 +25,7 @@ function httpNotFound() {
     return true;
 }
 
-// Routing
+// Routing 
 switch (strtok($_SERVER["REQUEST_URI"], "?")) {
     case (preg_match("/\.css$/", $_SERVER["REQUEST_URI"]) ? true: false): 
         $path = __DIR__ . "/static/css" .$_SERVER["REQUEST_URI"];
@@ -45,7 +45,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         }
         return httpNotFound();
 
-// /auth page is what will run the getAuthorizationUrl function
+// /auth route is what will run the getAuthorizationUrl function
 
 /* There are 6 parameters for the GetAuthorizationURL Function
 Domain (deprecated), Redirect URI, State, Provider, Connection and Organization
@@ -63,22 +63,40 @@ We recommend using Connection (pass a connectionID) */
                 null //organization ID, to identify connection based on organization ID
             );
             
-        header('Location: ' . $authorizationUrl, true, 302);
+        header('Location: ' . $authorizationUrl, true, 302);        
         return true;
 
-    // /callback page is what will run the getProfileAndToken function and return it
+    // /callback route is what will run the getProfileAndToken function and return it
+    
     case ("/callback"):
-        $profile = (new \WorkOS\SSO())->getProfileAndToken($_GET["code"]);
-        $first_name = $profile->raw['profile']['first_name'];
-        
-        echo $twig->render("login_successful.html.twig", ['raw_profile' => json_encode($profile), 'first_name' => $first_name]);
-        return true;
- 
+            $profile = (new \WorkOS\SSO())->getProfileAndToken($_GET["code"]);
+            $first_name = $profile->raw['profile']['first_name'];
+            
+            session_start();
+            $_SESSION['first_name'] = $first_name;
+            $_SESSION['profile'] = $profile;
+            $_SESSION['isactive'] = true;
+            
+            header('Location: ' . '/', true, 302);
 
-    // home and /login will display the login page       
+        return true;
+    
+    // / route renders the login page if no user set, logged in page if user is set
     case ("/"):
-    case ("/login"):
-        echo $twig->render("login.html.twig");
+        session_start();        
+        if(isset($_SESSION['first_name'])){
+            echo $twig->render("login_successful.html.twig", ['raw_profile' => json_encode($_SESSION['profile']), 'first_name' => $_SESSION['first_name']]);
+        } else {            
+            echo $twig->render("login.html.twig");
+        }
+        return true;
+    
+    // /logout clears and ends the session
+    case ("/logout"):
+        session_start();
+        session_unset();
+        session_destroy();
+        header('Location: ' . '/', true, 302);
         return true;
 
     default:
