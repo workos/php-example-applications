@@ -6,8 +6,8 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 //Set API Key, ClientID, and Connection
-$WORKOS_API_KEY = "sk_test_a2V5XzAxRkI3VzVZWVpUUktQMkJGUTE4QldYMEVOLG1NMVJzd3gzU0NRS2lhWU0wc21rRW1tUVc";
-$WORKOS_CLIENT_ID = "project_01EGKAEB7G5N88E83MF99J785F";
+$WORKOS_API_KEY = "";
+$WORKOS_CLIENT_ID = "";
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -57,10 +57,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 // '/' route is what will be the home page, allow users to get started creating an MFA factor.
 
     case ("/"):
-        session_unset();
-        session_destroy();
         session_start();  
-
         echo $twig->render("list_factors.html.twig");
     
         return true;
@@ -69,6 +66,9 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 //  parameters
 
     case ("/enroll_factor_details"):
+        session_start();
+        session_unset();
+        session_destroy();
         session_start();
 
         echo $twig->render("enroll_factor.html.twig");  
