@@ -54,47 +54,46 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         }
         return httpNotFound();
 
-// /auth route is what will run the getAuthorizationUrl function
+// '/' route is what will be the home page, allow users to get started creating an MFA factor.
 
-/* There are 6 parameters for the GetAuthorizationURL Function
-Domain (deprecated), Redirect URI, State, Provider, Connection and Organization
-These can be read about here: https://workos.com/docs/reference/sso/authorize/get
-We recommend using Connection (pass a connectionID) */
-
-
-    // /callback route is what will run the getProfileAndToken function and return it
-    
-
-    // / route renders the login page if no user set, logged in page if user is set
     case ("/"):
-        session_start();  
         session_unset();
         session_destroy();
+        session_start();  
 
         echo $twig->render("list_factors.html.twig");
     
-
         return true;
-    
-    // /logout clears and ends the session
+
+// '/enroll_factor_details' page allows user to select if they want to enroll 'sms' or 'totp' and provide 
+//  parameters
+
     case ("/enroll_factor_details"):
         session_start();
+
         echo $twig->render("enroll_factor.html.twig");  
+
         return true;
+
+// '/factor_details' enrolls and displays the factor that was selected in the previous step. Allows user
+//  to use to authenticate the factor
 
     case ("/factor_detail"):
         session_start();
+
         $factorType = $_POST['type'];
+
         if (isset($_POST['phone_number'])):
             $phoneNumber = $_POST['phone_number'];
         else :
             $phoneNumber = NULL;
         endif;
+
         if (isset($_POST['totp_issuer']))
             $totpIssuer = $_POST['totp_issuer'];
+
         if (isset($_POST['totp_user']))
             $totpUser = $_POST['totp_user'];
-        //echo $factorType;
         
         if ($factorType == "sms") {
             $newFactor = (new \WorkOS\MFA()) -> enrollFactor($factorType, null, null, $phoneNumber);
@@ -119,6 +118,7 @@ We recommend using Connection (pass a connectionID) */
         $authenticationFactorId = $newFactor->id;
 
         $_SESSION['authentication_factor_id'] = $authenticationFactorId;
+
         if($type == 'sms'):
         echo $twig->render("factor_detail.html.twig", ['factor_list' => json_encode($_SESSION['factor_list']), 'phone_number' => $phoneNumber, 'environment' => $environment, 'type' => $type, 'authentication_factor_id' => $authenticationFactorId, 'code' => "{{code}}"]);
         elseif($type == 'totp'):
@@ -126,6 +126,9 @@ We recommend using Connection (pass a connectionID) */
         endif;
         
         return true;
+
+//  '/challenge_factor' will allow the user to select to challenge the factor they created by inputting
+//   what should be the correct code
 
         case ("/challenge_factor"):
             session_start();
@@ -138,9 +141,14 @@ We recommend using Connection (pass a connectionID) */
             endif;
 
             $challengeFactor = (new \WorkOS\MFA()) -> challengeFactor($_SESSION['authentication_factor_id'], $smsMessage);
+
             $_SESSION['authentication_challenge_id'] = $challengeFactor->id;
+
             return true;   
-        
+
+//     'challenge_success' will display whether or not the user successfully passed the challenge, and allow a return to
+//      the home page.
+
         case ("/challenge_success"):
             session_start();
 
@@ -151,8 +159,11 @@ We recommend using Connection (pass a connectionID) */
             endif;
 
             $verifyFactor = (new \WorkOS\MFA()) -> verifyFactor($_SESSION['authentication_challenge_id'], $code);
+
             $valid = json_encode($verifyFactor->valid); 
+
             echo $twig->render("challenge_success.html.twig", ['authentication_factor_id' => json_encode($_SESSION['authentication_factor_id']), 'valid' => $valid]);
+
     default:
         return httpNotFound();
 }
