@@ -5,9 +5,12 @@ require __DIR__ . "/vendor/autoload.php";
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-//Set API Key, ClientID, Connection, and/or domain
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+//Set API Key, ClientID, and Connection
+$WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
+$WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID'];
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -16,12 +19,6 @@ $twig = new Environment($loader);
 // Configure WorkOS with API Key and Client ID
 \WorkOS\WorkOS::setApiKey($WORKOS_API_KEY);
 \WorkOS\WorkOS::setClientId($WORKOS_CLIENT_ID);
-
-// // Convenient function for throwing a 404
-// function httpNotFound() {
-//     header($_SERVER["SERVER_PROTOCOL"] . " 404");
-//     return true;
-// }
 
 // Convenient function for redirecting to  URL
 function Redirect($url, $permanent = false)
@@ -65,7 +62,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         $profileAndToken = (new \WorkOS\SSO())->getProfileAndToken($code);
 
         // Use the information in `profile` for further business logic.
-        $profile = json_encode($profileAndToken->profile);
+        $profile = json_encode($profileAndToken->profile, JSON_PRETTY_PRINT);
         echo $twig->render("success.html", ['profile' => $profile]);
         return true;
 
