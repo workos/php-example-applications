@@ -21,9 +21,12 @@ jobs:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
 
-      - name: Lint Code Base
-        uses: github/super-linter@v4
-        env:
-          VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: "main"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Create files
+        run: mkdir tools | mkdir php-cs-fixer
+        
+      - name: Install dependencies
+        run: composer require --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer
+        
+      - name: Run Linter
+        run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix . --dry-run
