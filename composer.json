@@ -1,0 +1,12 @@
+{
+    "name": "workos-inc/sso-example-applications",
+    "description": "An suite of PHP example applicatiosn demonstrating how to use the WorkOS PHP SDK",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "WorkOS",
+            "email": "support@workos.com"
+        }
+    ],
+    "require": {}
+}
