@@ -5,9 +5,16 @@ require __DIR__ . "/vendor/autoload.php";
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-//Set API Key, ClientID, Connection, and/or domain
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+//Set API Key, ClientID, and Connection
+$WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
+$WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID'];
+
+// Setup html templating library
+$loader = new FilesystemLoader(__DIR__ . '/templates');
+$twig = new Environment($loader);
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
