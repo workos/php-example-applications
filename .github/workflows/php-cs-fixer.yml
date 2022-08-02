@@ -17,5 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: PHP-CS-Fixer
-      uses: docker://oskarstark/php-cs-fixer-ga
+    - name: easy configurable php-cs-fixer
+      uses: zalexki/php-cs-fixer-action@1.0.1
+
