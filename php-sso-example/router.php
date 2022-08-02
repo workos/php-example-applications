@@ -5,10 +5,13 @@ require __DIR__ . "/vendor/autoload.php";
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 //Set API Key, ClientID, and Connection
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
-$WORKOS_CONNECTION_ID = "";
+$WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
+$WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID'];
+$WORKOS_CONNECTION_ID = "conn_01FNYP9FHYPEYN268C3D0RJJ7Z";
 
 
 // Setup html templating library
@@ -85,7 +88,7 @@ We recommend using Connection (pass a connectionID) */
     case ("/"):
         session_start();        
         if(isset($_SESSION['first_name'])){
-            echo $twig->render("login_successful.html.twig", ['raw_profile' => json_encode($_SESSION['profile']), 'first_name' => $_SESSION['first_name']]);
+            echo $twig->render("login_successful.html.twig", ['raw_profile' => json_encode($_SESSION['profile'], JSON_PRETTY_PRINT), 'first_name' => $_SESSION['first_name']]);
         } else {            
             echo $twig->render("login.html.twig");
         }
