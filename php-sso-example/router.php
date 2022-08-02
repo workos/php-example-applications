@@ -5,29 +5,33 @@ require __DIR__ . "/vendor/autoload.php";
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 //Set API Key, ClientID, and Connection
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
-$WORKOS_CONNECTION_ID = "";
+$WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
+$WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID'];
+$WORKOS_CONNECTION_ID = "conn_01FNYP9FHYPEYN268C3D0RJJ7Z";
 
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
 $twig = new Environment($loader);
 
-// Configure WorkOS with API Key and Client ID 
+// Configure WorkOS with API Key and Client ID
 \WorkOS\WorkOS::setApiKey($WORKOS_API_KEY);
 \WorkOS\WorkOS::setClientId($WORKOS_CLIENT_ID);
 
 // Convenient function for throwing a 404
-function httpNotFound() {
+function httpNotFound()
+{
     header($_SERVER["SERVER_PROTOCOL"] . " 404");
     return true;
 }
 
-// Routing 
+// Routing
 switch (strtok($_SERVER["REQUEST_URI"], "?")) {
-    case (preg_match("/\.css$/", $_SERVER["REQUEST_URI"]) ? true: false): 
+    case (preg_match("/\.css$/", $_SERVER["REQUEST_URI"]) ? true : false):
         $path = __DIR__ . "/static/css" .$_SERVER["REQUEST_URI"];
         if (is_file($path)) {
             header("Content-Type: text/css");
@@ -36,7 +40,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         }
         return httpNotFound();
 
-    case (preg_match("/\.png$/", $_SERVER["REQUEST_URI"]) ? true: false): 
+    case (preg_match("/\.png$/", $_SERVER["REQUEST_URI"]) ? true : false):
         $path = __DIR__ . "/static/images" .$_SERVER["REQUEST_URI"];
         if (is_file($path)) {
             header("Content-Type: image/png");
@@ -45,12 +49,12 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         }
         return httpNotFound();
 
-// /auth route is what will run the getAuthorizationUrl function
+        // /auth route is what will run the getAuthorizationUrl function
 
-/* There are 6 parameters for the GetAuthorizationURL Function
-Domain (deprecated), Redirect URI, State, Provider, Connection and Organization
-These can be read about here: https://workos.com/docs/reference/sso/authorize/get
-We recommend using Connection (pass a connectionID) */
+        /* There are 6 parameters for the GetAuthorizationURL Function
+        Domain (deprecated), Redirect URI, State, Provider, Connection and Organization
+        These can be read about here: https://workos.com/docs/reference/sso/authorize/get
+        We recommend using Connection (pass a connectionID) */
 
     case ("/auth"):
         $authorizationUrl = (new \WorkOS\SSO())
@@ -62,36 +66,36 @@ We recommend using Connection (pass a connectionID) */
                 $WORKOS_CONNECTION_ID, //connection which is the WorkOS Connection ID,
                 null //organization ID, to identify connection based on organization ID
             );
-            
-        header('Location: ' . $authorizationUrl, true, 302);        
+
+        header('Location: ' . $authorizationUrl, true, 302);
         return true;
 
-    // /callback route is what will run the getProfileAndToken function and return it
-    
+        // /callback route is what will run the getProfileAndToken function and return it
+
     case ("/callback"):
-            $profile = (new \WorkOS\SSO())->getProfileAndToken($_GET["code"]);
-            $first_name = $profile->raw['profile']['first_name'];
-            
-            session_start();
-            $_SESSION['first_name'] = $first_name;
-            $_SESSION['profile'] = $profile;
-            $_SESSION['isactive'] = true;
-            
-            header('Location: ' . '/', true, 302);
+        $profile = (new \WorkOS\SSO())->getProfileAndToken($_GET["code"]);
+        $first_name = $profile->raw['profile']['first_name'];
+
+        session_start();
+        $_SESSION['first_name'] = $first_name;
+        $_SESSION['profile'] = $profile;
+        $_SESSION['isactive'] = true;
+
+        header('Location: ' . '/', true, 302);
 
         return true;
-    
-    // / route renders the login page if no user set, logged in page if user is set
+
+        // / route renders the login page if no user set, logged in page if user is set
     case ("/"):
-        session_start();        
-        if(isset($_SESSION['first_name'])){
-            echo $twig->render("login_successful.html.twig", ['raw_profile' => json_encode($_SESSION['profile']), 'first_name' => $_SESSION['first_name']]);
-        } else {            
+        session_start();
+        if (isset($_SESSION['first_name'])) {
+            echo $twig->render("login_successful.html.twig", ['raw_profile' => json_encode($_SESSION['profile'], JSON_PRETTY_PRINT), 'first_name' => $_SESSION['first_name']]);
+        } else {
             echo $twig->render("login.html.twig");
         }
         return true;
-    
-    // /logout clears and ends the session
+
+        // /logout clears and ends the session
     case ("/logout"):
         session_start();
         session_unset();

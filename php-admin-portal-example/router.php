@@ -13,11 +13,12 @@ $WORKOS_CLIENT_ID = "";
 $loader = new FilesystemLoader(__DIR__ . '/templates');
 $twig = new Environment($loader);
 
-// Configure WorkOS with API Key and Client ID 
+// Configure WorkOS with API Key and Client ID
 \WorkOS\WorkOS::setApiKey($WORKOS_API_KEY);
 
 // Convenient function for throwing a 404
-function httpNotFound() {
+function httpNotFound()
+{
     header($_SERVER["SERVER_PROTOCOL"] . " 404");
     return true;
 }
@@ -25,8 +26,7 @@ function httpNotFound() {
 // Convenient function for redirecting to  URL
 function Redirect($url, $permanent = false)
 {
-    if (headers_sent() === false)
-    {
+    if (headers_sent() === false) {
         header('Location: ' . $url, true, ($permanent === true) ? 301 : 302);
     }
 
@@ -34,7 +34,7 @@ function Redirect($url, $permanent = false)
 }
 
 // Convenient function to transform an object to an associative array
-function objectToArray($d) 
+function objectToArray($d)
 {
     if (is_object($d)) {
         // Gets the properties of the given object
@@ -57,17 +57,17 @@ function objectToArray($d)
 
 // Routing
 switch (strtok($_SERVER["REQUEST_URI"], "?")) {
-    case (preg_match("/\.css$/", $_SERVER["REQUEST_URI"]) ? true: false): 
+    case (preg_match("/\.css$/", $_SERVER["REQUEST_URI"]) ? true : false):
         $path = __DIR__ . "/static/css" .$_SERVER["REQUEST_URI"];
         if (is_file($path)) {
-           // header("Content-Type: text/css");
+            // header("Content-Type: text/css");
             header("Content-Type: image/png");
             readfile($path);
             return true;
         }
         return httpNotFound();
 
-    case (preg_match("/\.png$/", $_SERVER["REQUEST_URI"]) ? true: false): 
+    case (preg_match("/\.png$/", $_SERVER["REQUEST_URI"]) ? true : false):
         $path = __DIR__ . "/static/images" .$_SERVER["REQUEST_URI"];
         if (is_file($path)) {
             header("Content-Type: image/png");
@@ -76,22 +76,22 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         }
         return httpNotFound();
 
-    //Declare main and /login routes which renders templates/generate.html
+        //Declare main and /login routes which renders templates/generate.html
     case ("/"):
         echo $twig->render("generate.html");
-        return true; 
+        return true;
     case ("/portal"):
         $sessionIntent = $_POST['intent_selector'];
         $domain = $_POST['domain'];
-        $domainArray = explode(" ", $domain);        
+        $domainArray = explode(" ", $domain);
         $orgName = $_POST['org'];
 
-        //check if the organization name exists, otherwise create a new organization 
+        //check if the organization name exists, otherwise create a new organization
         $orgs = (new \WorkOS\Organizations()) -> listOrganizations($domainArray);
 
         if ($orgs[2] != null) {
             echo count($orgs);
-            $orgId = $orgs[2][0]->raw["id"];            
+            $orgId = $orgs[2][0]->raw["id"];
         } else {
             $newOrganization = (new \WorkOS\Organizations()) -> createOrganization($orgName, $domainArray);
             $orgId = $newOrganization->id;
@@ -105,7 +105,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         Redirect($finalLink, false);
 
         return true;
-    //else return  HTTP 404 Error
+        //else return  HTTP 404 Error
     default:
         return httpNotFound();
 }
