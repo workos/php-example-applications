@@ -17,8 +17,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Create files
+      run: mkdir tools | mkdir php-cs-fixer
+      
     - name: Install dependencies
-      run: mkdir tools | mkdir php-cs-fixer | composer require --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer
+      run: composer require --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer
       
     - name: Run Linter
       run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix . --dry-run
