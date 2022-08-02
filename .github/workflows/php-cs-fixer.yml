@@ -6,8 +6,11 @@
 # https://github.com/github/super-linter
 name: Lint Code Base
 
-on: [push, pull_request]
-name: Main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 jobs:
   php-cs-fixer:
     name: PHP-CS-Fixer
