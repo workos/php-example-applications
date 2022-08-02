@@ -1,0 +1,25 @@
+# This workflow executes several linters on changed files based on languages used in your code base whenever
+# you push a code or open a pull request.
+#
+# You can adjust the behavior by modifying this file.
+# For more information, see:
+# https://github.com/github/super-linter
+name: PHP Lint
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  php-lint:
+    name: PHP-CS-Fixer
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: php lint
+      uses: composer lint
+
+    - name: phpcs
+      uses: composer phpcs
+

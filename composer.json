@@ -8,5 +8,14 @@
             "email": "support@workos.com"
         }
     ],
-    "require": {}
+    "require-dev": {
+        "composer/composer": "^2.0",
+        "squizlabs/php_codesniffer": "^3.5",
+        "overtrue/phplint": "^5.3"
+    },
+    "scripts": {
+        "lint": "phplint --no-cache .",
+        "phpcs": "phpcs --standard=PSR12 .",
+        "phpcbf": "phpcbf --standard=PSR12 ."
+    }
 }
