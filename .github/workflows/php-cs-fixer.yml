@@ -20,13 +20,9 @@ jobs:
         with:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
-
-        
-      - name: Create files
-        run: mkdir tools | mkdir php-cs-fixer
         
       - name: Install dependencies
-        run: composer require --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer
+        run: composer require friendsofphp/php-cs-fixer
         
       - name: Run Linter
         run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix . --dry-run
