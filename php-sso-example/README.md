@@ -16,9 +16,9 @@ Composer - [Link](https://getcomposer.org/)
    composer i
    ```
 
-1. Follow the instructions [here](https://docs.workos.com/sso/auth-flow) on setting up an SSO connection. The redirect URL for the example app if used as is will be http://localhost:8000/auth/callback.
+2. Follow the instructions [here](https://docs.workos.com/sso/auth-flow) on setting up an SSO connection. The redirect URL for the example app if used as is will be http://localhost:8000/auth/callback.
 
-1. Edit lines 14 of `router.php` to declare the connectionID.
+3. Edit lines 14 of `router.php` to declare the connectionID.
 
 4. Create a new file called `.env` and enter your API Key and Client ID from the WorkOS Dashboard. 
 
