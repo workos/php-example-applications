@@ -25,4 +25,4 @@ jobs:
         run: composer require friendsofphp/php-cs-fixer
         
       - name: Run Linter
-        run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix . --dry-run
+        run: php-cs-fixer fix . --dry-run
