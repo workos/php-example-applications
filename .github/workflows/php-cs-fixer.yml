@@ -6,23 +6,13 @@
 # https://github.com/github/super-linter
 name: Lint Code Base
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
+name: Main
 jobs:
-  run-lint:
+  php-cs-fixer:
+    name: PHP-CS-Fixer
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
-          fetch-depth: 0
-        
-      - name: Install dependencies
-        run: composer require friendsofphp/php-cs-fixer
-        
-      - name: Run Linter
-        run: php-cs-fixer fix . --dry-run
+    - uses: actions/checkout@v3
+    - name: PHP-CS-Fixer
+      uses: docker://oskarstark/php-cs-fixer-ga
