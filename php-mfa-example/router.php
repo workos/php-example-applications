@@ -5,9 +5,12 @@ require __DIR__ . "/vendor/autoload.php";
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 //Set API Key, ClientID, and Connection
-$WORKOS_API_KEY = "";
-$WORKOS_CLIENT_ID = "";
+$WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
+$WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID'];
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -58,18 +61,6 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 
     case ("/"):
         session_start();
-        echo $twig->render("list_factors.html.twig");
-
-        return true;
-
-        // '/enroll_factor_details' page allows user to select if they want to enroll 'sms' or 'totp' and provide
-        //  parameters
-
-    case ("/enroll_factor_details"):
-        session_start();
-        session_unset();
-        session_destroy();
-        session_start();
 
         echo $twig->render("enroll_factor.html.twig");
 
@@ -100,14 +91,14 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         if ($factorType == "sms") {
             $newFactor = (new \WorkOS\MFA()) -> enrollFactor($factorType, null, null, $phoneNumber);
             $phoneNumber = $newFactor->sms['phone_number'];
-            $environment = $newFactor->environmentId;
+            // $environment = $newFactor->environmentId;
             $type = $newFactor->type;
         }
 
         if ($factorType == "totp") {
             $newFactor = (new \WorkOS\MFA()) -> enrollFactor($factorType, $totpIssuer, $totpIssuer, null);
             $type = $newFactor->type;
-            $environment = $newFactor->environmentId;
+            // $environment = $newFactor->environmentId;
             $qrCode = $newFactor->totp['qr_code'];
         }
 
@@ -119,13 +110,14 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         }
 
         $authenticationFactorId = $newFactor->id;
+        $createdAt = $newFactor->createdAt;
 
         $_SESSION['authentication_factor_id'] = $authenticationFactorId;
 
         if ($type == 'sms'):
-            echo $twig->render("factor_detail.html.twig", ['factor_list' => json_encode($_SESSION['factor_list']), 'phone_number' => $phoneNumber, 'environment' => $environment, 'type' => $type, 'authentication_factor_id' => $authenticationFactorId, 'code' => "{{code}}"]);
+            echo $twig->render("factor_detail.html.twig", ['factor_list' => json_encode($_SESSION['factor_list']), 'phone_number' => $phoneNumber, 'type' => $type, 'authentication_factor_id' => $authenticationFactorId, 'code' => "{{code}}", 'created_at' => $createdAt]);
         elseif ($type == 'totp'):
-            echo $twig->render("factor_detail.html.twig", ['factor_list' => json_encode($_SESSION['factor_list']), 'environment' => $environment, 'type' => $type, 'authentication_factor_id' => $authenticationFactorId, 'qr_code' => $qrCode, 'code' => "{{code}}"]);
+            echo $twig->render("factor_detail.html.twig", ['factor_list' => json_encode($_SESSION['factor_list']), 'type' => $type, 'authentication_factor_id' => $authenticationFactorId, 'qr_code' => $qrCode, 'code' => "{{code}}", 'created_at' => $createdAt]);
         endif;
 
         return true;
@@ -155,8 +147,13 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
     case ("/challenge_success"):
         session_start();
 
-        if (isset($_POST['code'])):
-            $code = $_POST['code'];
+        if (isset($_POST['code-1'])):
+            $codeArray = [];
+            foreach($_POST as $key => $value) {
+                array_push($codeArray, $value);
+            }
+            $code = implode($codeArray);
+
         else:
             $code = null;
         endif;
