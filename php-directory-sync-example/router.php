@@ -11,6 +11,14 @@ include './variables.php';
 $loader = new FilesystemLoader(__DIR__ . '/templates');
 $twig = new Environment($loader);
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+//Set API Key, ClientID, and Connection
+$WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
+$WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID'];
+$WORKOS_WEBHOOKS_SECRET = $_ENV['WORKOS_WEBHOOKS_SECRET'];
+
 // Configure WorkOS with API Key and Client ID
 \WorkOS\WorkOS::setApiKey($WORKOS_API_KEY);
 \WorkOS\WorkOS::setClientId($WORKOS_CLIENT_ID);
@@ -49,7 +57,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             ->listUsers(
                 $directoryId
             );
-        $users = json_encode($usersList);
+        $users = json_encode($usersList, JSON_PRETTY_PRINT);
         echo $twig->render('users.html.twig', ['users' => $users]);
         return true;
 
@@ -60,7 +68,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             ->listGroups(
                 $directoryId
             );
-        $groups = json_encode($groupsList);
+        $groups = json_encode($groupsList, JSON_PRETTY_PRINT);
         echo $twig->render('groups.html.twig', ['groups' => $groups]);
         return true;
 
@@ -71,7 +79,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             ->getDirectory(
                 $directoryId
             );
-        $parsed_directory = json_encode($directory);
+        $parsed_directory = json_encode($directory, JSON_PRETTY_PRINT);
         echo $twig->render('directory.html.twig', ['directory' => $parsed_directory, 'id' => $directoryId]);
         return true;
 
@@ -83,7 +91,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 
         if ($payload && $sigHeader) {
             $webhook = (new \WorkOS\Webhook())
-            ->constructEvent($sigHeader, $payload, $WORKOS_WEBHOOK_SECRET, 180);
+            ->constructEvent($sigHeader, $payload, $WORKOS_WEBHOOKS_SECRET, 180);
 
             error_log(print_r($WORKOS_ASCII, true));
             error_log(print_r("↓↓↓↓ PRE-VALIDATION ↓↓↓↓", true));
