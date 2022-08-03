@@ -1,6 +1,6 @@
 # php-directory-sync-example
 
-An example PHP app demonstrating SSO with the [WorkOS PHP SDK](https://github.com/workos-inc/workos-php).
+An example PHP app demonstrating SSO with the [WorkOS PHP SDK](https://github.com/workos/workos-php).
 
 ## Dependencies
 
@@ -11,14 +11,19 @@ Composer - [Link](https://getcomposer.org/)
 1. Clone the repo and install the dependencies by running the following:
 
    ```bash
-   git clone git@github.com:workos-inc/php-example-applications/php-directory-sync-example
+   git clone git@github.com:workos/php-example-applications/php-directory-sync-example
    cd php-example-applications/php-directory-sync-example
    composer i
    ```
 
 2. Follow the instructions [here](https://docs.workos.com/sso/auth-flow) on setting up an SSO connection. The redirect URL for the example app if used as is will be http://localhost:8000/auth/callback.
 
-3. Edit lines 9-12 of `variables.php` to declare the WorkOS API Key, WorkOS Client ID, connectionID, and Webhooks Secret.
+3. Create a file at the root of this project called .env and declare the WorkOS API Key, WorkOS Client ID, and Webhooks Secret.
+
+```WORKOS_API_KEY="your_api_key"
+WORKOS_CLIENT_ID="your_client_id"
+WORKOS_WEBHOOKS_SECRET="your_webhook_secret"
+```
 
 ## Running the app
 
