@@ -1,6 +1,6 @@
 # php-sso-example
 
-An example PHP app demonstrating SSO with the [WorkOS PHP SDK](https://github.com/workos-inc/workos-php).
+An example PHP app demonstrating SSO with the [WorkOS PHP SDK](https://github.com/workos/workos-php).
 
 ## Dependencies
 
@@ -11,7 +11,7 @@ Composer - [Link](https://getcomposer.org/)
 1. Clone the repo and install the dependencies by running the following:
 
    ```bash
-   git clone git@github.com:workos-inc/php-example-applications
+   git clone git@github.com:workos/php-example-applications
    cd php-example-applications/php-mfa-example
    composer i
    ```
