@@ -100,13 +100,14 @@ body {
     margin: 4px 2px;
     transition-duration: 0.4s;
     cursor: pointer;
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 3px 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .button-outline {
     background-color: #f9f9fb;
     color: #6363f1;
     padding: 8px 16px;
+    box-shadow: none;
 }
 
 .button:hover,
@@ -195,15 +196,7 @@ h1 {
     font-weight: 200;
 }
 
-.logged_in_div_left button {
-    padding: 8px 22px;
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-}
 
-.logged_in_div_right button {
-    padding: 8px 22px;
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-}
 
 div.text_box {
     background-color: #f9f9fb;
@@ -236,12 +229,6 @@ div.text_box {
 
 .logged_in_nav img {
     height: 50px;
-    border-radius: 50%;
-    border: 2px solid #2f2e2e;
-}
-
-.logged_in_nav img:hover {
-    border: 2px solid #555555;
 }
 
 .nav-item {
