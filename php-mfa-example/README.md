@@ -1,6 +1,6 @@
 # php-sso-example
 
-An example PHP app demonstrating SSO with the [WorkOS PHP SDK](https://github.com/workos/workos-php).
+An example PHP app demonstrating MFA with the [WorkOS PHP SDK](https://github.com/workos/workos-php).
 
 ## Dependencies
 
