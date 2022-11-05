@@ -30,16 +30,6 @@ function httpNotFound()
     return true;
 }
 
-
-//debugging function DELETE LATER
-function debug_to_console($data) {
-    $output = $data;
-    if (is_array($output))
-        $output = implode(',', $output);
-    echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
-}
-
-
 // Convenient function to transform an object to an associative array
 function objectToArray($d)
 {
@@ -62,13 +52,12 @@ function objectToArray($d)
     }
 }
 
-
-// Routing
-switch (strtok($_SERVER["REQUEST_URI"], "?")) {
+//Routing
+switch (strtok($_SERVER["REQUEST_URI"], "?")) { 
     case (preg_match("/\.css$/", $_SERVER["REQUEST_URI"]) ? true : false):
         $path = __DIR__ . "/static/css" .$_SERVER["REQUEST_URI"];
         if (is_file($path)) {
-            header("Content-Type: text/css");
+            header("Content-Type: text/css"); 
             readfile($path);
             return true;
         }
@@ -84,7 +73,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         return httpNotFound();
 
 
-// /set_org route is what will set organization
+//set_org route is what will set organization
     case ("/"):
     case ("/login"):
     case ("/logout"):
@@ -92,16 +81,60 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         return true;
 
     case ("/set_org"):
-        $organizationId = $_POST['org'];
+        $organizationId = $_POST["org"] ?? "";
         $organization = (new \WorkOS\Organizations()) -> getOrganization($organizationId);
         $orgPayloadArray = objectToArray($organization);
         $orgPayloadArrayRawData = $orgPayloadArray['raw'];
-        $finalOrgId = $orgPayloadArrayRawData['id'];
-        echo $twig->render("send_events.html.twig", ['org_id' => $finalOrgId]);
+        $finalOrgId = $orgPayloadArrayRawData["id"] ?? "";
+        $orgName = $orgPayloadArrayRawData["name"] ?? "";
+        session_start();
+        $_SESSION['id'] = $finalOrgId;
+        $_SESSION['name'] = $orgName;
+        echo $twig->render("send_events.html.twig", ['org_id' => $_SESSION['id'], 'org_name' => $orgName]); 
         return true;
+
+//send_event
+    case ("/send_event"):
+        session_start();
+        $payload = file_get_contents("php://input");
+        $eventId = $payload[6];
+        $event;
+        if($eventId === '0'){
+            $event = $user_signed_in;
+        } else if($eventId === '1'){
+            $event = $user_logged_out;
+        } else if($eventId === '2'){
+            $event = $user_organization_deleted;
+        } else if($eventId === '3'){
+            $event = $user_connection_deleted;
+        }
+
+        $orgId = $_SESSION['id'];
+        $orgName = $_SESSION['name'];
+
+        $auditLogsEvent = (new \WorkOS\AuditLogs()) -> createEvent(
+            organizationId: $orgId,
+            event: $event
+        );
+
+        echo $twig->render("send_events.html.twig", ['org_id' => $_SESSION['id'], 'org_name' => $_SESSION['name']]); 
+        return true;
+
+//export_events
+    case ("/export_events"):
+        session_start();
+        $payload = file_get_contents("php://input");
+        $orgId = $_SESSION['id'];
+        $orgName = $_SESSION['name'];
+        echo $twig->render("export_events.html.twig", ['org_id' => $orgId, 'org_name' => $orgName]); 
+        return true;
+
+
+
 
     default:
         return httpNotFound();
+
 } 
 
 ?>

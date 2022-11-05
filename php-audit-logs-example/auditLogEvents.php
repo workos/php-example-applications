@@ -1,6 +1,6 @@
 <?php
 
-$user_signed_in = [
+$user_signed_in = [ 
     "action" => "user.signed_in",
     "occurred_at" => date("c"),
     "version" => 1,

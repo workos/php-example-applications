@@ -39,7 +39,9 @@
         </div>
         <div class="logged_in_div_right">
             <div class="flex flex-start width-40vw">
-                <div><h1>Test</h1></div>
+                <div>
+                <h1 class="org-name">{{org_name}}</h1>
+                </div>
             </div>
             <div class="flex_column width-40vw ">
                 <div class="flex card width-40vw space-between ">
@@ -54,7 +56,7 @@
                             </div>                    
                         </div>
                         <div>
-                            <a href="">
+                            <a href="/export_events">
                                 <div class="button button-outline width-15vw">
                                     <p>Export Events</p>
                                 </div> 
@@ -62,7 +64,7 @@
                         </div>
                     </div>
                     <hr style="height:0.5px;width:100%;">
-                    <form action="" method="POST">
+                    <form action="/send_event" method="POST"> 
                         <div class="flex margin-y-15">                                                                
                             <div>
                                 <button class="box" name="event" id="user_signed_in" value="0" type="submit">                            

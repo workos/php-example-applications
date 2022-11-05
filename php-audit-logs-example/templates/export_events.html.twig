@@ -1,14 +1,14 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
+    <link rel="stylesheet" href="login.css">
 </head>
 
 <body class="container_success">
     <div class="logged_in_nav">
         <div class="flex">
             <div>
-                <img src="../static/images/workos-logo-with-text.png" alt="workos logo">
+                <img src="workos-logo-with-text.png" alt="workos logo">
             </div>
         </div>
         <div>
@@ -21,7 +21,7 @@
         </div>
     </div>
     <div class='flex'>
-        <div class="logged_in_div_left">
+        <div class="logged_in_div_left"> 
             <div class="title-text">
                 <h1>Your app,</h1>
                 <h2 class="home-hero-gradient">Enterprise Ready</h2>
@@ -39,11 +39,11 @@
         </div>
         <div class="logged_in_div_right">
             <div class="flex flex-start width-40vw">
-                <div><h1>{{org_name}}</h1></div>
+                <div><h1 class="org-name">{{org_name}}</h1></div>
             </div>
             <div class="flex card width-40vw space-between ">
                 <div>
-                    <code class="org-id">{{organization_id}}</code>
+                    <code class="org-id">{{org_id}}</code>
                 </div>
                 <div class="org-button-div">
                     <a href="/logout"><button class="button">Change Org</button></a>
@@ -51,7 +51,7 @@
                 </div>
             </div>
             
-            <form action="{{ url_for('get_events') }}" method="POST">
+            <form action="" method="POST">
                 <div class="flex  card">                                                                
                     <div class="flex">
                         <button class="box" name="event" id="generate_csv" value="generate_csv" type="submit">                            
