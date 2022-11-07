@@ -159,7 +159,8 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             $orgPayloadArray = objectToArray($fetchExport);
             $orgPayloadArrayRawData = $orgPayloadArray['raw'];
             $url = $orgPayloadArrayRawData["url"] ?? "";
-            echo $url;
+            $source = file_get_contents($url);
+            file_put_contents('/[YOUR PATH HERE]/auditlogs.csv', $source);
         }
 
         echo $twig->render("export_events.html.twig", ['org_id' => $orgId, 'org_name' => $orgName]); 
