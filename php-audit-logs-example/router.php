@@ -129,6 +129,42 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         echo $twig->render("export_events.html.twig", ['org_id' => $orgId, 'org_name' => $orgName]); 
         return true;
 
+//generate_csv
+    case ("/get_events"):
+        session_start();
+        $payload = file_get_contents("php://input");
+        $orgId = $_SESSION['id'];
+        $orgName = $_SESSION['name'];
+        $event = $_POST["event"] ?? "";
+        $dateNow = (new \DateTime('now',new \DateTimeZone("UTC")))->format(\DateTime::ATOM);
+        $dateMonth = (new \DateTime('-1 month',new \DateTimeZone("UTC")))->format(\DateTime::ATOM);
+        $auditId;
+
+        if($event === "generate_csv"){
+            $createExport = (new \WorkOS\AuditLogs()) -> createExport(
+                organizationId: $orgId,
+                rangeStart: $dateMonth,
+                rangeEnd: $dateNow
+            );
+            $orgPayloadArray = objectToArray($createExport);
+            $orgPayloadArrayRawData = $orgPayloadArray['raw'];
+            $auditId = $orgPayloadArrayRawData["id"] ?? "";
+            $_SESSION['Auditid'] = $auditId;
+        } 
+        
+        if($event === "access_csv"){
+            $fetchExport = (new \WorkOS\AuditLogs()) -> getExport(
+                $_SESSION['Auditid']
+            );
+            $orgPayloadArray = objectToArray($fetchExport);
+            $orgPayloadArrayRawData = $orgPayloadArray['raw'];
+            $url = $orgPayloadArrayRawData["url"] ?? "";
+            echo $url;
+        }
+
+        echo $twig->render("export_events.html.twig", ['org_id' => $orgId, 'org_name' => $orgName]); 
+        return true;
+
 
 
 
