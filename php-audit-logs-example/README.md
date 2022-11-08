@@ -18,9 +18,7 @@ Composer - [Link](https://getcomposer.org/)
    composer i
    ```
 
-2. Edit lines 15 of `router.php` to declare the connectionID.
-
-3. Create a new file called `.env` and enter your API Key and Client ID from the WorkOS Dashboard. 
+2. Create a new file called `.env` and enter your API Key and Client ID from the WorkOS Dashboard. 
 
 ```
 WORKOS_API_KEY="your_api_key"
@@ -40,7 +38,7 @@ Once running, navigate to the following URL for a demonstration on the SSO workf
 
 ## Audit Logs Setup with WorkOS
 
-10. Follow the [Audit Logs configuration steps](https://workos.com/docs/audit-logs/emit-an-audit-log-event/sign-in-to-your-workos-dashboard-account-and-configure-audit-log-event-schemas) to set up the following 5 events that are sent with this example:
+3. Follow the [Audit Logs configuration steps](https://workos.com/docs/audit-logs/emit-an-audit-log-event/sign-in-to-your-workos-dashboard-account-and-configure-audit-log-event-schemas) to set up the following 5 events that are sent with this example:
 
 Action title: "user.signed_in" | Target type: "team"
 Action title: "user.logged_out" | Target type: "team"
@@ -48,11 +46,11 @@ Action title: "user.organization_set" | Target type: "team"
 Action title: "user.organization_deleted" | Target type: "team"
 Action title: "user.connection_deleted" | Target type: "team"
 
-11. Next, take note of the Organization ID for the Org which you will be sending the Audit Log events for. This ID gets entered into the splash page of the example application.
+4. Next, take note of the Organization ID for the Org which you will be sending the Audit Log events for. This ID gets entered into the splash page of the example application.
 
-12. Once you enter the Organization ID and submit it, you will be brought to the page where you'll be able to send the audit log events that were just configured. You'll also notice that the action of setting the Organization triggered an Audit Log already. Click the buttons to send the respective events.
+5. Once you enter the Organization ID and submit it, you will be brought to the page where you'll be able to send the audit log events that were just configured. You'll also notice that the action of setting the Organization triggered an Audit Log already. Click the buttons to send the respective events.
 
-13. To obtain a CSV of the Audit Log events that were sent for the last 30 days, click the "Export Events" button. This will bring you to a new page where you can download the events. Downloading the events is a 2 step process. First you need to create the report by clicking the "Generate CSV" button. Then click the "Access CSV" button to download a CSV of the Audit Log events for the selected Organization for the past 30 days.
+6. To obtain a CSV of the Audit Log events that were sent for the last 30 days, click the "Export Events" button. This will bring you to a new page where you can download the events. Downloading the events is a 2 step process. First you need to create the report by clicking the "Generate CSV" button. Then click the "Access CSV" button to download a CSV of the Audit Log events for the selected Organization for the past 30 days.
 
 ## Need help?
 

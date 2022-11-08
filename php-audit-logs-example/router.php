@@ -12,8 +12,6 @@ $dotenv->load();
 //Set API Key, ClientID, and Connection
 $WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
 $WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID']; 
-$WORKOS_CONNECTION_ID = "conn_01GDXFAY0TACJK0BMK3WXFFHR6";
-
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
