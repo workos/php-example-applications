@@ -2,6 +2,8 @@
 
 An example PHP application demonstrating how to use the [WorkOS PHP SDK](https://github.com/workos/workos-php) to send and retrieve Audit Log events. This example is not meant to show a real-world example of an Audit Logs implementation, but rather to show concrete examples of how events can be sent using the PHP SDK.
 
+Note: PHP 8 or higher is required to use this example application
+
 ## Dependencies
 
 Composer - [Link](https://getcomposer.org/)
