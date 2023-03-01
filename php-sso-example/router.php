@@ -8,10 +8,10 @@ use Twig\Loader\FilesystemLoader;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-//Set API Key, ClientID, and Connection
+//Set API Key, ClientID, and Organization ID
 $WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
 $WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID'];
-$WORKOS_CONNECTION_ID = "conn_01FNYP9FHYPEYN268C3D0RJJ7Z";
+$WORKOS_ORGANIZATION_ID = $_ENV['WORKOS_ORGANIZATION_ID'];
 
 
 // Setup html templating library
@@ -63,8 +63,8 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
                 'http://localhost:8000/callback', //redirectURI
                 [], //state array, also empty
                 null, //Provider which can remain null unless being used
-                $WORKOS_CONNECTION_ID, //connection which is the WorkOS Connection ID,
-                null //organization ID, to identify connection based on organization ID
+                null, //Organization which is the WorkOS Organization ID,
+                $WORKOS_ORGANIZATION_ID //organization ID, to identify connection based on organization ID
             );
 
         header('Location: ' . $authorizationUrl, true, 302);

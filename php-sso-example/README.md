@@ -20,11 +20,12 @@ Composer - [Link](https://getcomposer.org/)
 
 3. Edit lines 14 of `router.php` to declare the connectionID.
 
-4. Create a new file called `.env` and enter your API Key and Client ID from the WorkOS Dashboard. 
+4. Create a new file called `.env` and enter your API Key, Client ID, and Organization ID from the WorkOS Dashboard. 
 
 ```
 WORKOS_API_KEY="your_api_key"
 WORKOS_CLIENT_ID="your_client_id"
+WORKOS_ORGANIZATION_ID="your_organization_id"
 ```
 
 ## Running the app
