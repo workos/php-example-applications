@@ -9,8 +9,8 @@
     }
   ],
   "require": {
-    "workos/workos-php": "^1.12.0",
-    "twig/twig": "^3.0",
-    "vlucas/phpdotenv": "^5.4.1"
+    "workos/workos-php": "^3.0",
+    "twig/twig": "^3.5",
+    "vlucas/phpdotenv": "^5.5"
   }
 }

@@ -17,5 +17,8 @@
         "lint": "phplint --no-cache .",
         "phpcs": "phpcs --standard=PSR12 .",
         "phpcbf": "phpcbf --standard=PSR12 ."
+    },
+    "require": {
+        "workos/workos-php": "^3.0"
     }
 }
