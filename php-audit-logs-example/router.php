@@ -10,7 +10,8 @@ $dotenv->load();
 
 //Set API Key, ClientID, and Connection
 $WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
-$WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID']; 
+$WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID'];
+$PATH_USERNAME = $_ENV['PATH_USERNAME']; 
 
 // Setup html templating library
 $loader = new FilesystemLoader(__DIR__ . '/templates');
@@ -185,8 +186,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             $orgPayloadArrayRawData = $orgPayloadArray['raw'];
             $url = $orgPayloadArrayRawData["url"] ?? "";
             $source = file_get_contents($url);
-            //Add your path below to Download CSV to your computer's downloads folder
-            file_put_contents('/Users/[YOUR USERNAME HERE]/Downloads/auditlogs.csv', $source);
+            file_put_contents("/Users/$PATH_USERNAME/Downloads/auditlogs.csv", $source);
         }
         echo $twig->render("send_events.html.twig", ['org_id' => $orgId, 'org_name' => $orgName, 'rangeStart' => $dateNow, 'rangeEnd' => $dateMonth]); 
         return true;

@@ -18,11 +18,12 @@ Composer - [Link](https://getcomposer.org/)
    composer i
    ```
 
-2. Create a new file called `.env` and enter your API Key and Client ID from the WorkOS Dashboard. 
+2. Create a new file called `.env` and enter your API Key and Client ID from the WorkOS Dashboard. Add your system username from your computer to generate the path to the downloads folder in line 189 in router.php. Note: do not add '' to the username in your .env file. 
 
 ```
-WORKOS_API_KEY="your_api_key"
-WORKOS_CLIENT_ID="your_client_id"
+WORKOS_API_KEY='your_api_key'
+WORKOS_CLIENT_ID='your_client_id'
+PATH_USERNAME=username
 ```
 
 ## Running the app
