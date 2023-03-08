@@ -185,7 +185,8 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             $orgPayloadArrayRawData = $orgPayloadArray['raw'];
             $url = $orgPayloadArrayRawData["url"] ?? "";
             $source = file_get_contents($url);
-            file_put_contents('/Users/[USERNAME]/Downloads/auditlogs.csv', $source);
+            //Add your path below to Download CSV to your computer's downloads folder
+            file_put_contents('/Users/[YOUR USERNAME HERE]/Downloads/auditlogs.csv', $source);
         }
         echo $twig->render("send_events.html.twig", ['org_id' => $orgId, 'org_name' => $orgName, 'rangeStart' => $dateNow, 'rangeEnd' => $dateMonth]); 
         return true;
