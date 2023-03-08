@@ -18,11 +18,12 @@ Composer - [Link](https://getcomposer.org/)
    composer i
    ```
 
-2. Create a new file called `.env` and enter your API Key and Client ID from the WorkOS Dashboard. 
+2. Create a new file called `.env` and enter your API Key and Client ID from the WorkOS Dashboard. Add your system username from your computer to generate the path to the downloads folder in line 189 in router.php. Note: do not add '' to the username in your .env file. 
 
 ```
-WORKOS_API_KEY="your_api_key"
-WORKOS_CLIENT_ID="your_client_id"
+WORKOS_API_KEY='your_api_key'
+WORKOS_CLIENT_ID='your_client_id'
+PATH_USERNAME=username
 ```
 
 ## Running the app
@@ -50,7 +51,7 @@ Action title: "user.connection_deleted" | Target type: "team"
 
 5. Once you enter the Organization ID and submit it, you will be brought to the page where you'll be able to send the audit log events that were just configured. You'll also notice that the action of setting the Organization triggered an Audit Log already. Click the buttons to send the respective events.
 
-6. To obtain a CSV of the Audit Log events that were sent for the last 30 days, click the "Export Events" button. This will bring you to a new page where you can download the events. Downloading the events is a 2 step process. First you need to create the report by clicking the "Generate CSV" button. Then click the "Access CSV" button to download a CSV of the Audit Log events for the selected Organization for the past 30 days.
+6. To obtain a CSV of the Audit Log events that were sent for the last 30 days, click the "Export Events" tab. Downloading the events is a 2 step process. First you need to create the report by clicking the "Generate CSV" button. Then click the "Access CSV" button to download a CSV of the Audit Log events for the selected Organization for the past 30 days.
 
 ## Need help?
 
