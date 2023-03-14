@@ -5,7 +5,7 @@
     </head>
     <body class="container_success">
         <div class="logged_in_nav">
-            <div class="flex"> 
+            <div class="flex">
                 <div>
                     <img src="workos-logo-with-text.png" alt="workos logo">
                 </div>
@@ -38,34 +38,21 @@
             </div>
             <div class="logged_in_div_right">
                 <div class="flex_column">
-                    <h2>Directory Details</h2>
+                    <h2>
+                    {{name}} from {{directoryName}}
+                    </h2>
                     <div class="text_box">
-                        <p><span>Name: </span>
-                            {{name}}
-                        </p>
-                        <p><span>ID: </span>
-                            {{id}}
-                        </p>
-                        <p><span>Type: </span>
-                            {{type}}
-                        </p>
-                        <p><span>Domain: </span>
-                            {{domain}}
-                        </p>
-                        <p><span>Created: </span>
-                            {{created_at}}
-                        </p>
+                        <pre>
+                            <code class="prettyprint">
+                                {{group}}
+                            </code>                        
+                        </pre>
                     </div>
-                    <div class="flex_column">
-                        <p>⚡️ See Users and Groups in this Directory ⚡️</p>
-                        <div class="flex">
-                            <a href="/usersgroups?id={{id}}"><button class='button'>Users and
-                                    Groups</button></a>
-                            <a href="javascript:history.back()"><button class='button'>Back</button></a>
-                        </div>
-                    </div>
+
+                    <a href="javascript:history.back()"><button class='groups_button button'>Back</button></a>
                 </div>
             </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     </body>
 </html>
