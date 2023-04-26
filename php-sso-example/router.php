@@ -53,19 +53,34 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 
         /* There are 6 parameters for the GetAuthorizationURL Function
         Domain (deprecated), Redirect URI, State, Provider, Connection and Organization
-        These can be read about here: https://workos.com/docs/reference/sso/authorize/get
-        We recommend using Connection (pass a connectionID) */
+        These can be read about here: https://workos.com/docs/reference/sso/authorize/get */
 
     case ("/auth"):
-        $authorizationUrl = (new \WorkOS\SSO())
+
+        $loginType = $_POST['login_method'];
+
+       
+
+        // Set the organization or provider based on the login type
+        if ($loginType == "saml") {
+            $authorizationUrl = (new \WorkOS\SSO())
             ->getAuthorizationUrl(
                 null, //domain is deprecated, use organization instead
                 'http://localhost:8000/callback', //redirectURI
                 [], //state array, also empty
                 null, //Provider which can remain null unless being used
-                null, //Organization which is the WorkOS Organization ID,
-                $WORKOS_ORGANIZATION_ID //organization ID, to identify connection based on organization ID
-            );
+                null, //Connection which is the WorkOS Organization ID,
+                $WORKOS_ORGANIZATION_ID //organization ID, to identify connection based on organization ID,
+            );            
+        } else {
+            $authorizationUrl = (new \WorkOS\SSO())
+            ->getAuthorizationUrl(
+                null, //domain is deprecated, use organization instead
+                'http://localhost:8000/callback', //redirectURI
+                null, //state array, also empty
+                $loginType, //Provider which can remain null unless being used
+            );                    
+        }
 
         header('Location: ' . $authorizationUrl, true, 302);
         return true;
