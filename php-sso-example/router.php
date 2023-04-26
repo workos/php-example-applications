@@ -53,8 +53,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 
         /* There are 6 parameters for the GetAuthorizationURL Function
         Domain (deprecated), Redirect URI, State, Provider, Connection and Organization
-        These can be read about here: https://workos.com/docs/reference/sso/authorize/get
-        We recommend using Connection (pass a connectionID) */
+        These can be read about here: https://workos.com/docs/reference/sso/authorize/get */
 
     case ("/auth"):
 
