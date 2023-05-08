@@ -1,9 +1,15 @@
 <?php
 
-require __DIR__ . "/vendor/autoload.php";
-
+require __DIR__ . "/vendor/autoload.php"; 
+error_reporting(E_ALL ^ E_WARNING);
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+
+include './variables.php';
+
+// Setup html templating library
+$loader = new FilesystemLoader(__DIR__ . '/templates');
+$twig = new Environment($loader);
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -11,10 +17,6 @@ $dotenv->load();
 //Set API Key, ClientID, and Connection
 $WORKOS_API_KEY = $_ENV['WORKOS_API_KEY'];
 $WORKOS_CLIENT_ID = $_ENV['WORKOS_CLIENT_ID'];
-
-// Setup html templating library
-$loader = new FilesystemLoader(__DIR__ . '/templates');
-$twig = new Environment($loader);
 
 // Configure WorkOS with API Key and Client ID
 \WorkOS\WorkOS::setApiKey($WORKOS_API_KEY);
@@ -35,6 +37,22 @@ function httpNotFound()
 {
     header($_SERVER["SERVER_PROTOCOL"] . " 404");
     return true;
+}
+
+function objectToArray($obj) {
+    $arr = [];
+    $reflection = new ReflectionClass($obj);
+    $properties = $reflection->getProperties();
+    foreach ($properties as $property) {
+        $name = $property->getName();
+        $property->setAccessible(true);
+        $value = $property->getValue($obj);
+        if (is_object($value)) {
+            $value = objectToArray($value);
+        }
+        $arr[$name] = $value;
+    }
+    return $arr;
 }
 
 // Routing
@@ -61,70 +79,78 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 
     case ("/"):
         session_start();
+        $_SESSION['factorArray'];
+        echo $twig->render("index.html.twig", ['factors' => $_SESSION['factorArray']]);
 
-        echo $twig->render("enroll_factor.html.twig");
-
+        return true;
+    
+    case ("/clear_session"):
+        session_start();
+        $_SESSION['factorArray'] = [];
+        Redirect('/', false);
+        echo $twig->render("index.html.twig");
         return true;
 
         // '/factor_details' enrolls and displays the factor that was selected in the previous step. Allows user
         //  to use to authenticate the factor
+    
+    case ("/enroll_factor"):
+        session_start();
+        echo $twig->render("enroll_factor.html.twig");
+        return true;
+    
+    case ("/enroll_new_factor"): 
+        session_start();
+        $factor_type = $_POST["type"];
+        $new_factor;
+        if (!isset($_SESSION['factorArray'])) {
+            $_SESSION['factorArray'] = array();
+        }
+    
+        if ($factor_type == "sms") {
+            $factor_type = "sms";
+            $phoneNumber = $_POST["phone_number"];
+            $USnumber = "+1" . $phoneNumber;
+            $new_factor = (new \WorkOS\MFA())
+                ->enrollFactor(
+                    type: $factor_type,
+                    phoneNumber: $USnumber
+                );
+        } elseif ($factor_type == "totp") {
+            $factor_type = "totp";
+            $totpIssuer = $_POST['totp_issuer'];
+            $totpUser = $_POST['totp_user'];
+            $new_factor = (new \WorkOS\MFA())
+                ->enrollFactor(
+                    type: $factor_type,
+                    totpIssuer: $totpIssuer,
+                    totpUser: $totpUser
+                );
+        }
+        $data = objectToArray($new_factor);
+        array_push($_SESSION['factorArray'], $data);
+
+        echo $twig->render("index.html.twig", ['factors' => $_SESSION['factorArray']]);
+        return true;
+    
 
     case ("/factor_detail"):
         session_start();
-
-        $factorType = $_POST['type'];
-
-        if (isset($_POST['phone_number'])):
-            $phoneNumber = $_POST['phone_number'];
-        else :
-            $phoneNumber = null;
-        endif;
-
-        if (isset($_POST['totp_issuer'])) {
-            $totpIssuer = $_POST['totp_issuer'];
+        $id = $_GET['id'];
+        $factor = null;
+        foreach ($_SESSION['factorArray'] as $f) {
+            $item = $f['values']['id'];
+            if($item === $id){
+                $factor = $f;
+            }
         }
-
-        if (isset($_POST['totp_user'])) {
-            $totpUser = $_POST['totp_user'];
-        }
-
-        if ($factorType == "sms") {
-            $newFactor = (new \WorkOS\MFA()) -> enrollFactor($factorType, null, null, $phoneNumber);
-            $phoneNumber = $newFactor->sms['phone_number'];
-            // $environment = $newFactor->environmentId;
-            $type = $newFactor->type;
-        }
-
-        if ($factorType == "totp") {
-            $newFactor = (new \WorkOS\MFA()) -> enrollFactor($factorType, $totpIssuer, $totpIssuer, null);
-            $type = $newFactor->type;
-            // $environment = $newFactor->environmentId;
-            $qrCode = $newFactor->totp['qr_code'];
-        }
-
-        if (!isset($_SESSION['factor_list'])) {
-            $_SESSION['factor_list'] = array();
-            array_push($_SESSION['factor_list'], $newFactor);
-        } else {
-            array_push($_SESSION['factor_list'], $newFactor);
-        }
-
-        $authenticationFactorId = $newFactor->id;
-        $createdAt = $newFactor->createdAt;
-
-        $_SESSION['authentication_factor_id'] = $authenticationFactorId;
-
-        if ($type == 'sms'):
-            echo $twig->render("factor_detail.html.twig", ['factor_list' => json_encode($_SESSION['factor_list']), 'phone_number' => $phoneNumber, 'type' => $type, 'authentication_factor_id' => $authenticationFactorId, 'code' => "{{code}}", 'created_at' => $createdAt]);
-        elseif ($type == 'totp'):
-            echo $twig->render("factor_detail.html.twig", ['factor_list' => json_encode($_SESSION['factor_list']), 'type' => $type, 'authentication_factor_id' => $authenticationFactorId, 'qr_code' => $qrCode, 'code' => "{{code}}", 'created_at' => $createdAt]);
-        endif;
-
+        $_SESSION['current_factor'] = $factor;
+        $_SESSION['id'] = $id;
+        echo $twig->render("factor_detail.html.twig", ['factor' => $_SESSION['current_factor'], "title" => 'Factor Detail']);
         return true;
 
         //  '/challenge_factor' will allow the user to select to challenge the factor they created by inputting
         //   what should be the correct code
-
     case ("/challenge_factor"):
         session_start();
         echo $twig->render("challenge_factor.html.twig");
@@ -135,34 +161,40 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             $smsMessage = null;
         endif;
 
-        $challengeFactor = (new \WorkOS\MFA()) -> challengeFactor($_SESSION['authentication_factor_id'], $smsMessage);
+        $challengeFactor = (new \WorkOS\MFA()) -> challengeFactor($_SESSION['id'], $smsMessage);
+        $challengeFactorArr = objectToArray($challengeFactor);
+        $_SESSION['authentication_challenge_id'] = $challengeFactorArr['values']['id'];
+        return true;
 
-        $_SESSION['authentication_challenge_id'] = $challengeFactor->id;
-
+    case ("/challenge_success"):
+        session_start();
+        echo $twig->render("challenge_success.html.twig",['title' => 'Challenge Success']);
         return true;
 
 //     'challenge_success' will display whether or not the user successfully passed the challenge, and allow a return to
 //      the home page.
 
-    case ("/challenge_success"):
+    case ("/verify_factor"):
         session_start();
 
-        if (isset($_POST['code-1'])):
+        if (isset($_POST['code-1'])){
             $codeArray = [];
             foreach($_POST as $key => $value) {
                 array_push($codeArray, $value);
             }
             $code = implode($codeArray);
-
-        else:
+        }else{
             $code = null;
-        endif;
+         }
 
-        $verifyFactor = (new \WorkOS\MFA()) -> verifyFactor($_SESSION['authentication_challenge_id'], $code);
-
-        $valid = json_encode($verifyFactor->valid);
-
-        echo $twig->render("challenge_success.html.twig", ['authentication_factor_id' => json_encode($_SESSION['authentication_factor_id']), 'valid' => $valid]);
+        $verifyFactor = (new \WorkOS\MFA()) -> verifyChallenge($_SESSION['authentication_challenge_id'], $code);
+        $verifyFactorArr = objectToArray($verifyFactor);
+        $valid = $verifyFactorArr['values']['valid'];
+        $authFactor = $_SESSION['current_factor'];
+        $expires_at = $verifyFactorArr['values']["challenge"]['expires_at'];
+        $created_at = $verifyFactorArr['values']["challenge"]['created_at'];
+        echo $twig->render("challenge_success.html.twig", ['authentication_factor_id' => $authFactor, 'valid' => $valid, 'created_at' => $created_at, 'updated_at' => $expires_at]);
+        return true;
 
         // no break
     default:
