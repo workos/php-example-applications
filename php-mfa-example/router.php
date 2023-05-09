@@ -76,7 +76,6 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         return httpNotFound();
 
         // '/' route is what will be the home page, allow users to get started creating an MFA factor.
-
     case ("/"):
         session_start();
         $_SESSION['factorArray'];
@@ -90,16 +89,13 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         Redirect('/', false);
         echo $twig->render("index.html.twig");
         return true;
-
-        // '/factor_details' enrolls and displays the factor that was selected in the previous step. Allows user
-        //  to use to authenticate the factor
     
     case ("/enroll_factor"):
         session_start();
         echo $twig->render("enroll_factor.html.twig");
         return true;
     
-    case ("/enroll_new_factor"): 
+    case ("/enroll_sms_factor"): 
         session_start();
         $factor_type = $_POST["type"];
         $new_factor;
@@ -116,24 +112,46 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
                     type: $factor_type,
                     phoneNumber: $USnumber
                 );
-        } elseif ($factor_type == "totp") {
-            $factor_type = "totp";
-            $totpIssuer = $_POST['totp_issuer'];
-            $totpUser = $_POST['totp_user'];
-            $new_factor = (new \WorkOS\MFA())
-                ->enrollFactor(
-                    type: $factor_type,
-                    totpIssuer: $totpIssuer,
-                    totpUser: $totpUser
-                );
         }
         $data = objectToArray($new_factor);
         array_push($_SESSION['factorArray'], $data);
-
         echo $twig->render("index.html.twig", ['factors' => $_SESSION['factorArray']]);
         return true;
-    
 
+    case ('/enroll_totp_factor'):
+        session_start();
+        if (!isset($_SESSION['factorArray'])) {
+            $_SESSION['factorArray'] = array();
+        }
+    
+        $input = json_decode(file_get_contents('php://input'), true);
+        $type = $input['type'];
+        $issuer = $input['issuer'];
+        $user = $input['user'];
+        $enrolledFactorObj = (new \WorkOS\MFA())->enrollFactor(
+            type: $type, totpIssuer: $issuer, totpUser: $user
+        );
+        $enrolledFactor = objectToArray($enrolledFactorObj);
+
+        $qr_code = $enrolledFactor['raw']['totp']['qr_code'];
+        $object = $enrolledFactor['raw']['object'];
+        $id = $enrolledFactor['raw']['id'];
+        $created_at = $enrolledFactor['raw']['created_at'];
+        $updated_at = $enrolledFactor['raw']['updated_at'];
+        $type = $enrolledFactor['raw']['type'];
+
+        $newFactor = array(
+            'object' => $object,
+            'id' => $id,
+            'created_at' => $created_at,
+            'updated_at' => $updated_at,
+            'type' => $type
+        );
+
+        array_push($_SESSION['factorArray'], $enrolledFactor);
+        echo json_encode($qr_code);
+        return true;
+    
     case ("/factor_detail"):
         session_start();
         $id = $_GET['id'];
@@ -149,8 +167,8 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         echo $twig->render("factor_detail.html.twig", ['factor' => $_SESSION['current_factor'], "title" => 'Factor Detail']);
         return true;
 
-        //  '/challenge_factor' will allow the user to select to challenge the factor they created by inputting
-        //   what should be the correct code
+//  '/challenge_factor' will allow the user to select to challenge the factor they created by inputting
+//   what should be the correct code
     case ("/challenge_factor"):
         session_start();
         echo $twig->render("challenge_factor.html.twig");
@@ -186,7 +204,6 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         }else{
             $code = null;
          }
-
         $verifyFactor = (new \WorkOS\MFA()) -> verifyChallenge($_SESSION['authentication_challenge_id'], $code);
         $verifyFactorArr = objectToArray($verifyFactor);
         $valid = $verifyFactorArr['values']['valid'];

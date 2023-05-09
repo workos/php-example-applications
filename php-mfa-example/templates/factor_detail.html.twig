@@ -53,11 +53,6 @@
                                 <p>Updated At: <code>{{ factor.raw['updated_at'] }}</code></p>
                             </div>
                         </div> 
-                            {% if factor.raw['type'] == "totp" %}
-                                <div class="qr_div">
-                                    <img class="qr_code " src="{{ factor.raw['totp']['qr_code'] }}" alt="qr_code">
-                                </div>
-                            {% endif %}
                     </div>
                         <form method="POST" action="/challenge_factor">
                             <div class="flex_column">
