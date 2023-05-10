@@ -11,7 +11,7 @@ Composer - [Link](https://getcomposer.org/)
 1. Clone the repo and install the dependencies by running the following:
 
    ```bash
-   git clone git@github.com:workos/php-example-applications/php-admin-portal-example
+   git clone git@github.com:workos/php-example-applications
    cd php-example-applications/php-admin-portal-example
    composer i
    ```
