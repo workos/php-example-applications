@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="container_success">
@@ -44,11 +44,14 @@
                     <div>
                     {% if valid == 'true' %}                        
                         <h1>Challenge Successful</h1>
+                        <p>User Verified: True</p>
                     {% else %}
                         <h1>Challenge Unsuccessful</h1>    
+                        <p>User Verified: False</p>
                     {% endif %}
-                        <p>User Verified: {{valid}}</p>
-                        <p>Factor ID: {{authentication_factor_id}}</p>
+                        <p>Factor ID: {{authentication_factor_id.raw['id']}}</p>
+                        <p>Created At: {{created_at}}</p>
+                        <p>Expires At:{{updated_at}}</p>
                     </div>
                 </div>
                 <a href="/"><button class='button'>Go Back Home</button></a>
