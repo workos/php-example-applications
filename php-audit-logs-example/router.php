@@ -116,14 +116,13 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 //send_event
     case ("/send_event"):
         session_start();
-        $action = $_POST['event-action'];
         $version = $_POST['event-version'];
         $actorName = $_POST['actor-name'];
         $actorType = $_POST['actor-type'];
         $targetName = $_POST['target-name'];
         $targetType = $_POST['target-type'];
         $event = [ 
-            "action" => $action,
+            "action" => "user.organization_deleted",
             "occurred_at" => date("c"),
             "version" => (int)$version,
             "actor" => [

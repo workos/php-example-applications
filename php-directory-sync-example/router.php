@@ -108,7 +108,27 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         return true;
 
         //Groups & Users endpoint for listGroups & listUsers function
-    case ("/usersgroups"):
+    case ("/users"):
+        session_start();
+        $directoryId = $_GET["id"];
+        $directory = (new \WorkOS\DirectorySync())
+        ->getDirectory(
+            $directoryId
+        );
+        $parsed_directory = json_encode($directory, JSON_PRETTY_PRINT);
+        $directoryPayloadArray = objectToArray($directory);
+        $directoryPayloadArrayRawData = $directoryPayloadArray['raw'];
+        $directoryName = $directoryPayloadArrayRawData["name"] ?? "";
+        $_SESSION['directoryName'] = $directoryName;
+        [$before, $after, $users] = (new \WorkOS\DirectorySync())
+            ->listUsers(
+                $directoryId
+            );
+        $usersArr = objectToArray($users);
+        echo $twig->render('users.html.twig', ['users' => $usersArr, 'name' => $_SESSION['directoryName'], 'directory' => $directoryId]); 
+        return true;
+
+    case ("/groups"):
         session_start();
         $directoryId = $_GET["id"];
         $directory = (new \WorkOS\DirectorySync())
@@ -124,43 +144,8 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             ->listGroups(
                 $directoryId
             );
-        [$before, $after, $users] = (new \WorkOS\DirectorySync())
-            ->listUsers(
-                $directoryId
-            );
-        echo $twig->render('groups.html.twig', ['groups' => $groups, 'users' => $users, 'name' => $_SESSION['directoryName'], 'directory' => $directoryId]); 
-        return true;
-
-
-        //User endpoint
-    case ("/user"):
-        session_start();
-        $userId = $_GET["id"];
-        $user = (new \WorkOS\DirectorySync())
-            ->getUser(
-                $userId
-            );
-        $userPayload = json_encode($user, JSON_PRETTY_PRINT);
-        $userArray = objectToArray($user);
-        $userRaw = $userArray['raw'];
-        $userName = $userRaw["first_name"] ?? "";
-        echo $twig->render('user.html.twig', ['user' => $userPayload, 'firstName' => $userName, 'directoryName' => $_SESSION['directoryName']]);
-        return true;
-
-        //Group endpoint 
-    case ("/group"):
-        session_start();
-        $groupId = $_GET["id"];
-        $group = (new \WorkOS\DirectorySync())
-            ->getGroup(
-                $groupId
-            );
-        $groupPayload = json_encode($group, JSON_PRETTY_PRINT);
-        $groupArray = objectToArray($group);
-        $groupRaw = $groupArray['raw'];
-        $groupName = $groupRaw["name"] ?? "";
-        $_SESSION['directoryName'];
-        echo $twig->render('group.html.twig', ['group' => $groupPayload, 'name' => $groupName, 'directoryName' => $_SESSION['directoryName']]);
+        $groupsArr = objectToArray($groups);
+        echo $twig->render('groups.html.twig', ['groups' => $groupsArr, 'name' => $_SESSION['directoryName'], 'directory' => $directoryId]); 
         return true;
 
 

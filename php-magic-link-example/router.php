@@ -53,7 +53,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 
         //Declare main and /login routes which renders templates/generate.html
     case ("/"):
-        echo $twig->render("generate.html");
+        echo $twig->render("generate.html"); 
         return true;
 
     case ("/callback"):

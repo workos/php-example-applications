@@ -92,6 +92,10 @@ a:visited {
   width: 15vw;
 }
 
+.width-100vw {
+  width: 100vw;
+}
+
 .width-150px {
   width: 150px;
 }
@@ -424,12 +428,6 @@ pre.prettyprint {
   margin-left: 65px;
 }
 
-th {
-  text-align: center;
-  font-weight: bolder;
-  font-size: large;
-}
-
 tr {
   text-align: center;
   border-bottom: 1px solid #ebebf2;
@@ -452,6 +450,9 @@ table {
 }
 
 th {
+  text-align: center;
+  font-weight: bolder;
+  font-size: large;
   background-color: #e3e3e3;
   border-right: none;
   border-left: none;
