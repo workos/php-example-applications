@@ -96,9 +96,9 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
             ->getDirectory(
                 $directoryId
             );
-        $parsed_directory = json_encode($directory, JSON_PRETTY_PRINT);
         $directoryPayloadArray = objectToArray($directory);
         $directoryPayloadArrayRawData = $directoryPayloadArray['raw'];
+        $parsed_directory = json_encode($directoryPayloadArrayRawData, JSON_PRETTY_PRINT);
         $directoryName = $directoryPayloadArrayRawData["name"] ?? "";
         $directoryType = $directoryPayloadArrayRawData["type"] ?? "";
         $directoryDomain = $directoryPayloadArrayRawData["domain"] ?? "";

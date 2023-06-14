@@ -1,5 +1,5 @@
 body {
-  font-family: Inter, sans-serif;
+  font-family: Inter, sans-serif; 
   background-color: #f9f9fb;
 }
 
@@ -267,6 +267,7 @@ pre.prettyprint {
   border: 1px solid #555555;
   border-radius: 10px;
   width: 20vw;
+  height: 225px;
   margin: 0px 15px 0px 15px;
   padding: 25px;
 }

@@ -30,6 +30,28 @@ function Redirect($url, $permanent = false)
     exit();
 }
 
+// Convenient function to transform an object to an associative array
+function objectToArray($d)
+{
+    if (is_object($d)) {
+        // Gets the properties of the given object
+        // with get_object_vars function
+        $d = get_object_vars($d);
+    }
+
+    if (is_array($d)) {
+        /*
+        * Return array converted to object
+        * Using __FUNCTION__ (Magic constant)
+        * for recursive call
+        */
+        return array_map(__FUNCTION__, $d);
+    } else {
+        // Return array
+        return $d;
+    }
+}
+
 // Routing
 switch (strtok($_SERVER["REQUEST_URI"], "?")) {
     case (preg_match("/\.css$/", $_SERVER["REQUEST_URI"]) ? true : false):
@@ -62,8 +84,12 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         $profileAndToken = (new \WorkOS\SSO())->getProfileAndToken($code);
 
         // Use the information in `profile` for further business logic.
-        $profile = json_encode($profileAndToken->profile, JSON_PRETTY_PRINT);
-        echo $twig->render("success.html", ['profile' => $profile]);
+        $profile = $profileAndToken->profile;
+        $profileArr = objectToArray($profile);
+        $profileArrayRawData = $profileArr['raw'];
+        $finalProfile = json_encode($profileArrayRawData, JSON_PRETTY_PRINT);
+
+        echo $twig->render("success.html", ['profile' => $finalProfile]);
         return true;
 
     case ("/passwordless-auth"):
