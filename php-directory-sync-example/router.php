@@ -104,7 +104,7 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
         $directoryDomain = $directoryPayloadArrayRawData["domain"] ?? "";
         $directoryCreated = $directoryPayloadArrayRawData["created_at"] ?? "";
         $_SESSION['id'] = $directoryId;
-        echo $twig->render('directory.html.twig', ['directory' => $parsed_directory, 'id' => $_SESSION['id'], 'name'=> $directoryName, 'type'=>$directoryType, 'domain'=>$directoryDomain, 'created_at'=>$directoryCreated]);
+        echo $twig->render('directory.html', ['directory' => $parsed_directory, 'id' => $_SESSION['id'], 'name'=> $directoryName, 'type'=>$directoryType, 'domain'=>$directoryDomain, 'created_at'=>$directoryCreated]);
         return true;
 
         //Groups & Users endpoint for listGroups & listUsers function
