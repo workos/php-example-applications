@@ -20,27 +20,11 @@
             </div>
         </div>
         <div class='flex'>
-            <div class="logged_in_div_left">
-                <div class="title-text">
-                    <h1>Your app,</h1>
-                    <h2 class="home-hero-gradient">Enterprise Ready</h2>
-                </div>
-                <div class="title-subtext">
-                    <p>Start selling to enterprise customers with just a few lines of code.</p>
-                    <p>Implement features like single sign-on in minutes instead of months.</p>
-                </div>
-                <div class="flex success-buttons">
-                    <a href="https://workos.com/signup" target="_blank"><button class='button'>Get Started</button></a>
-                    <a href="mailto:sales@workos.com?subject=WorkOS Sales Inquiry" target="_blank"><button
-                            class='button button-outline sales-button'>Contact
-                            Sales</button></a>
-                </div>
-            </div>
             <div class="logged_in_div_right">
                 <div class="flex_column">
                     <div class="flex space-between width-40vw">
                         <div>
-                            <h2>Current MFA Factors</h2>
+                            <h2>MFA Factors</h2>
                         </div>
                         <div class="flex space-between">
                             <a href="/enroll_factor">
@@ -55,15 +39,23 @@
 
                 <div>
                     {% if factors is not empty %}
-                        <div>
+                        <table class="width-725px">
+                            <tr>
+                            <th>Type</th>
+                            <th>ID</th>
+                            <th>View Details</th>
+                            </tr>
                             {% for factor in factors %}
-                                <div class="width-40vw">
-                                    <a href="/factor_detail?id={{ factor.raw['id'] }}" class="button login_button">
-                                        {{ factor.raw['type'] }} | {{ factor.raw['id'] }}
-                                    </a>
-                                </div>
+
+                                <tr>
+                                <td>{{ factor.raw['type'] }}</td>
+                                <td>{{ factor.raw['id'] }}</td>
+                                <td><a class="button button-outline" href="/factor_detail?id={{ factor.raw['id'] }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-2"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+                                </a></td>
+                                </tr>
                             {% endfor %}
-                        </div>
+                        </table> 
                     {% else %}
                         <div class="mt-20 card width-40vw">
                             <p style="text-align: center; color: gray;">No Current Factors</p>

@@ -88,35 +88,33 @@
                             <div id="send-events" name='#send-events' data-tab-content class="flex_column">                          
                             <div>
                                 <h3>Send Events</h3>
+                                <p>Configure and send a "User Organization Deleted" Event</p>  
                             </div>
-                            <hr style="height:0.5px;width:100%;margin-bottom:25px;">                                                 
+                            <hr style="height:0.5px;width:100%;margin-bottom:25px;"> 
+                                                                            
                             <form id="send-event-form" action="/send_event" method="POST">
                                 <div class="event-form-input-group flex-column flex-start">
-                                    <div><label for="event-action">Event Action</label></div>
-                                    <div><input required name="event-action" class="text-input" id="event-action" type="text" placeholder="Defined in your WorkOS Dashboard, e.g. user.organization_set"></div>
-                                </div>                           
-                                <div class="event-form-input-group flex-column flex-start">
                                     <div><label for="event-version">Event Version</label></div>
-                                    <div><input required name="event-version" class="text-input" id="event-version" type="text" placeholder="Defined in your WorkOS Dashboard, e.g. 1"></div>
+                                    <div><input required name="event-version" class="text-input" type="text" placeholder="[Integer] schema version of the event"></div>
                                 </div>
                                 <div class="event-form-input-group flex-column flex-start">
                                     <div><label for="actor-name">Actor Name</label></div>
-                                    <div><input required name="actor-name" class="text-input" id="actor-name" type="text" placeholder="Name of the user who completed the action"></div>
+                                    <div><input required name="actor-name" class="text-input" type="text" placeholder="Name of the user who completed the action"></div>
                                 </div>
                                 <div class="event-form-input-group flex-column flex-start">
                                     <div><label for="actor-type">Actor Type</label></div>
-                                    <div><input required name="actor-type" class="text-input" id="actor-type" type="text" placeholder="Type of the user who completed the action"></div>
+                                    <div><input required name="actor-type" class="text-input" type="text" placeholder="Type of the user who completed the action"></div>
                                 </div>
                                 <div class="event-form-input-group flex-column flex-start">
                                     <div><label for="target-name">Target Name</label></div>
-                                    <div><input required name="target-name" class="text-input" id="target-name" type="text" placeholder="Name of the target"></div>
+                                    <div><input required name="target-name" class="text-input" type="text" placeholder="Name of the target"></div>
                                 </div>
                                 <div class="event-form-input-group flex-column flex-start">
                                     <div><label for="target-type">Target Type</label></div>
-                                    <div><input required name="target-type" class="text-input" id="target-type" type="text" placeholder="Defined in your WorkOS Dashboard, e.g. team"></div>
-                                </div>                                                  
+                                    <div><input required name="target-type" class="text-input" type="text" placeholder="Defined in WorkOS Dashboard"></div>
+                                </div>                                                   
                                 <div>
-                                    <button class="button button-outline" name="event" id="user_org_deleted" value="user-organization-deleted">                            
+                                    <button class="button button-outline" name="event" id="user_org_deleted" value="user-organization-deleted" type="submit" onclick="showSnackbar()">                            
                                         <div class="flex width-100p">
                                             <p>Send Event</p> 
                                         </div>                           
@@ -171,12 +169,36 @@
                 <div id="snackbar">Log Event Sent</div>
             </div>
         </div>
-        <script>
-            const tabs = document.querySelectorAll('[data-tab-target]')
-            const tabContents = document.querySelectorAll('[data-tab-content]')
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
+
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    <script>
+        function showSnackbar() {
+            var x = document.getElementById("snackbar");
+            x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 500);
+        }
+
+        const tabs = document.querySelectorAll('[data-tab-target]')
+        const tabContents = document.querySelectorAll('[data-tab-content]')
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = document.querySelector(tab.dataset.tabTarget)
+                tabContents.forEach(tabContent => {
+                    tabContent.classList.remove('active')
+                })
+                tabs.forEach(tab => {
+                    tab.classList.remove('active')
+                })
+                tab.classList.add('active')
+                target.classList.add('active')            
+                localStorage.setItem('selectedTab', target.getAttribute('name'))                
+            })
+        })
+        
+        tabs.forEach(tab => {
+            if(localStorage.getItem('selectedTab') != undefined || null) {
+                if(tab.getAttribute('name') == localStorage.getItem('selectedTab')){
                     const target = document.querySelector(tab.dataset.tabTarget)
                     tabContents.forEach(tabContent => {
                         tabContent.classList.remove('active')
@@ -185,28 +207,10 @@
                         tab.classList.remove('active')
                     })
                     tab.classList.add('active')
-                    target.classList.add('active')            
-                    localStorage.setItem('selectedTab', target.getAttribute('name'))                
-                })
-            })
-            
-            tabs.forEach(tab => {
-                if(localStorage.getItem('selectedTab') != undefined || null) {
-                    if(tab.getAttribute('name') == localStorage.getItem('selectedTab')){
-                        const target = document.querySelector(tab.dataset.tabTarget)
-                        tabContents.forEach(tabContent => {
-                            tabContent.classList.remove('active')
-                        })
-                        tabs.forEach(tab => {
-                            tab.classList.remove('active')
-                        })
-                        tab.classList.add('active')
-                        target.classList.add('active')
-                    }                                                        
-                }
-            })
-        </script>
-        <script src="https://unpkg.com/lucide@latest"></script>
-        <script>lucide.createIcons()</script>
+                    target.classList.add('active')
+                }                                                        
+            }
+        })
+    </script>
     </body>
 </html>

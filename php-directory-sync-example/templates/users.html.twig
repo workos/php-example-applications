@@ -32,23 +32,23 @@
                             class='button button-sm button-outline'>Back</button></a>
                     </div>
                 </div>
-               {% if groups is not empty %}
+               {% if users is not empty %}
                 <div>
                     <table class="width-507px">
                         <tr>
                           <th>Name</th>
-                          <th>ID</th>
+                          <th>Email</th>
                         </tr>
-                        {% for group in groups %}
+                        {% for user in users %}
                           <tr>
-                            <td class="ta-left">{{group.raw['name']}}</td>
-                            <td class="ta-left"><code>{{group.raw['id']}}</code></td>                                            
+                            <td class="ta-left">{{user.raw['first_name']}} {{user.raw['last_name']}}</td>
+                            <td class="ta-left"><code>{{user.raw['username']}}</code></td>                                            
                           </tr>
                         {% endfor %}                    
                     </table>
                 </div>
                 {% else %}
-                <div class="card width-40vw"><code>No Groups Found</code></div>
+                <div class="card width-40vw"><code>No Users Found</code></div>
                 {% endif %}   
             </div>
         </div>

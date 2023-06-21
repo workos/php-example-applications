@@ -64,7 +64,7 @@ function objectToArray($d)
 
 // Routing
 switch (strtok($_SERVER["REQUEST_URI"], "?")) {
-    case (preg_match("/\.css$/", $_SERVER["REQUEST_URI"]) ? true : false):
+    case (preg_match("/\.css$/", $_SERVER["REQUEST_URI"]) ? true : false): 
         $path = __DIR__ . "/static/css" .$_SERVER["REQUEST_URI"];
         if (is_file($path)) {
             // header("Content-Type: text/css");
@@ -85,34 +85,45 @@ switch (strtok($_SERVER["REQUEST_URI"], "?")) {
 
         //Declare main and /login routes which renders templates/generate.html
     case ("/"):
-        echo $twig->render("generate.html");
+        echo $twig->render("index.html");
         return true;
-    case ("/portal"):
-        $sessionIntent = $_POST['intent_selector'];
-        $domain = $_POST['domain'];
-        $domainArray = explode(" ", $domain);
-        $orgName = $_POST['org'];
 
-        //check if the organization name exists, otherwise create a new organization
-        $orgs = (new \WorkOS\Organizations()) -> listOrganizations($domainArray);
+    case ("/provision_enterprise"):
+        //use a session for the org_id
+        session_start();
+        $org_id;
+        $organization_name = $_POST["org"] ?? null;
+        $organization_domains = $_POST["domain"] ?? null;
 
-        if ($orgs[2] != null) {
-            echo count($orgs);
-            $orgId = $orgs[2][0]->raw["id"];
+        $orgs = (new \WorkOS\Organizations())->listOrganizations(domains: [$organization_domains]);
+
+        if (!empty($orgs["data"])) {
+            $org_id = $orgs["data"][0]["id"];
         } else {
-            $newOrganization = (new \WorkOS\Organizations()) -> createOrganization($orgName, $domainArray);
-            $orgId = $newOrganization->id;
+            $organization = (new \WorkOS\Organizations())->createOrganization(
+                name: $organization_name,
+                domains: [$organization_domains]
+            );
+            // $org_id = $organization["id"];
+            $organizationArr = objectToArray($organization);
+            $organizationArrRaw = $organizationArr['raw'];
+            $org_id = $organizationArrRaw["id"];
         }
+        $_SESSION['org_id'] = $org_id;
+        echo $twig->render("org_logged_in.html");
+        return true;
 
-        //generate portal link
-        $linkPayloadObject = (new \WorkOS\Portal()) -> generateLink($orgId, $sessionIntent);
+    case ("/launch_admin_portal"):
+        $value = $_GET['value'];
+        session_start();
+        $linkPayloadObject = (new \WorkOS\Portal()) -> generateLink($_SESSION['org_id'], $value);
         $linkPayloadArray = objectToArray($linkPayloadObject);
         $linkPayloadArrayRawData = $linkPayloadArray['raw'];
         $finalLink = $linkPayloadArrayRawData['link'];
         Redirect($finalLink, false);
-
         return true;
         //else return  HTTP 404 Error
+
     default:
         return httpNotFound();
 }
